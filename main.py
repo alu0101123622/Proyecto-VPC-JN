@@ -55,6 +55,9 @@ def convert_to_bytes(file_or_bytes, resize=None):
 
 # --------------------------------- Define Layout ---------------------------------
 
+sg.theme('Dark Grey 3')
+
+
 # First the window layout...2 columns
 
 left_col = [[sg.Text('Folder'), sg.In(size=(25,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse()],
@@ -63,14 +66,14 @@ left_col = [[sg.Text('Folder'), sg.In(size=(25,1), enable_events=True ,key='-FOL
 
 # For now will only show the name of the file that was chosen
 images_col = [[sg.Text('You choose from the list:')],
-              [sg.Text(size=(40,1), key='-TOUT-')],
+              [sg.Text(size=(None,None), key='-TOUT-')],
               [sg.Image(key='-IMAGE-')]]
 
 # ----- Full layout -----
 layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(images_col, element_justification='c')]]
 
 # --------------------------------- Create Window ---------------------------------
-window = sg.Window('Multiple Format Image Viewer', layout,resizable=True)
+window = sg.Window('Multiple Format Image Viewer', layout,resizable=True, location=(50,50))
 
 # ----- Run the Event Loop -----
 # --------------------------------- Event Loop ---------------------------------
@@ -92,11 +95,13 @@ while True:
     elif event == '-FILE LIST-':    # A file was chosen from the listbox
         try:
             filename = os.path.join(values['-FOLDER-'], values['-FILE LIST-'][0])
-            window['-TOUT-'].update(filename)
+            shortname = values['-FILE LIST-'][0] # Prefiero solo el nombre y omitir la ruta.
+            window['-TOUT-'].update(shortname)
             if values['-W-'] and values['-H-']:
                 new_size = int(values['-W-']), int(values['-H-'])
             else:
                 new_size = None
+                new_size = int(1080), int(720) # Ajusto un tamaño fijo para cualquier imagen de 1080x720
             window['-IMAGE-'].update(data=convert_to_bytes(filename, resize=new_size))
         except Exception as E:
             print(f'** Error {E} **')
