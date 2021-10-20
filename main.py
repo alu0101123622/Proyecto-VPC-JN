@@ -43,7 +43,6 @@ def convert_to_bytes(file_or_bytes, resize=None):
         return bio.getvalue()
 
 
-
 # --------------------------------- Define Layout ---------------------------------
 
 sg.theme('Dark Grey 3')
@@ -63,11 +62,11 @@ images_col = [[sg.Text('You choose from the list:')],
               [sg.Image(key='-IMAGE-')]]
 
 # ----- Full layout -----
-# layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
-layout = [[sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
+layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
+# layout = [[sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
 
 # --------------------------------- Create Window ---------------------------------
-window = sg.Window('Multiple Format Image Viewer', layout,resizable=True, location=(50,50), size =(800,800))
+window = sg.Window('Multiple Format Image Viewer', layout, resizable=True, location=(50,50), size =(800,800))
 
 # ----- Run the Event Loop -----
 # --------------------------------- Event Loop ---------------------------------
@@ -79,7 +78,9 @@ while True:
         break
     # Opciones del menú
     if event == 'Abrir':
-        sg.FileBrowse()
+        sg.FileBrowse(file_types=(("Text Files", "*.tiff"),))
+        # sg.popup('About this program', 'Version 1.0', 'PySimpleGUI rocks...') --> PARA LA INFORMACION DE LA IMAGEN      
+
     if event == '-FOLDER-':                         # Folder name was filled in, make a list of files in the folder
         folder = values['-FOLDER-']
         try:
@@ -105,5 +106,6 @@ while True:
         except Exception as E:
             print(f'** Error {E} **')
             pass        # something weird happened making the full filename
+
 # --------------------------------- Close & Exit ---------------------------------
 window.close()
