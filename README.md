@@ -19,5 +19,4 @@ shortname = values['-FILE LIST-'][0]
 
 Para evitar que el tamaño y posición de la ventana cambien en función del tamaño original de cada imagen, definí el tamaño estándar de 1080x720 pixeles, aún así, se le sigue dando la opción al usuario de cambiar el tamaño de la imagen al que desee:
 
-![Resize option](https://gyazo.com/7925e99d122ba0e224513a1edd0663e7)
-
+[![Boton de Resize](https://i.gyazo.com/7925e99d122ba0e224513a1edd0663e7.png)](https://gyazo.com/7925e99d122ba0e224513a1edd0663e7)

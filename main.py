@@ -5,21 +5,12 @@ import PIL.Image
 import io
 import base64
 
-"""
-    Demo for displaying any format of image file.
-    
-    Normally tkinter only wants PNG and GIF files.  This program uses PIL to convert files
-    such as jpg files into a PNG format so that tkinter can use it.
-    
-    The key to the program is the function "convert_to_bytes" which takes a filename or a 
-    bytes object and converts (with optional resize) into a PNG formatted bytes object that
-    can then be passed to an Image Element's update method.  This function can also optionally
-    resize the image.
-    
-    Copyright 2020 PySimpleGUI.org
-"""
-
-
+def get_pixel_values(filename):
+    img = PIL.Image.open(filename, 'r')
+    width, height = img.size
+    pixel_values = list(img.getdata())
+    print('Los datos de la imagen son widht: %s, height: %s' % (str(width), str(height)))
+    print(pixel_values[0])
 
 def convert_to_bytes(file_or_bytes, resize=None):
     '''
@@ -56,7 +47,9 @@ def convert_to_bytes(file_or_bytes, resize=None):
 # --------------------------------- Define Layout ---------------------------------
 
 sg.theme('Dark Grey 3')
-
+menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
+            ['Información', ['Imprimir datos'],],
+            ['Herramientas',]]
 
 # First the window layout...2 columns
 
@@ -70,10 +63,11 @@ images_col = [[sg.Text('You choose from the list:')],
               [sg.Image(key='-IMAGE-')]]
 
 # ----- Full layout -----
-layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(images_col, element_justification='c')]]
+# layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
+layout = [[sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
 
 # --------------------------------- Create Window ---------------------------------
-window = sg.Window('Multiple Format Image Viewer', layout,resizable=True, location=(50,50))
+window = sg.Window('Multiple Format Image Viewer', layout,resizable=True, location=(50,50), size =(800,800))
 
 # ----- Run the Event Loop -----
 # --------------------------------- Event Loop ---------------------------------
@@ -83,6 +77,9 @@ while True:
         break
     if event == sg.WIN_CLOSED or event == 'Exit':
         break
+    # Opciones del menú
+    if event == 'Abrir':
+        sg.FileBrowse()
     if event == '-FOLDER-':                         # Folder name was filled in, make a list of files in the folder
         folder = values['-FOLDER-']
         try:
@@ -90,7 +87,7 @@ while True:
         except:
             file_list = []
         fnames = [f for f in file_list if os.path.isfile(
-            os.path.join(folder, f)) and f.lower().endswith((".png", ".jpg", "jpeg", ".tiff", ".bmp"))]
+            os.path.join(folder, f)) and f.lower().endswith((".png", ".jpg", "jpeg", ".tiff", ".tif", ".bmp", ".tfe"))]
         window['-FILE LIST-'].update(fnames)
     elif event == '-FILE LIST-':    # A file was chosen from the listbox
         try:
@@ -101,8 +98,10 @@ while True:
                 new_size = int(values['-W-']), int(values['-H-'])
             else:
                 new_size = None
-                new_size = int(1080), int(720) # Ajusto un tamaño fijo para cualquier imagen de 1080x720
-            window['-IMAGE-'].update(data=convert_to_bytes(filename, resize=new_size))
+                new_size = int(800), int(800) # Ajusto un tamaño fijo para cualquier imagen de 1080x720
+            proccessed_image = convert_to_bytes(filename, resize=new_size)
+            window['-IMAGE-'].update(proccessed_image)
+            get_pixel_values(filename)
         except Exception as E:
             print(f'** Error {E} **')
             pass        # something weird happened making the full filename
