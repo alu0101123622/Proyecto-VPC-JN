@@ -5,6 +5,8 @@ import PIL.Image
 import io
 import base64
 
+new_size = int(800), int(800) # Ajusto un tamaño fijo para cualquier imagen de 800x800
+
 def get_pixel_values(filename):
     img = PIL.Image.open(filename, 'r')
     width, height = img.size
@@ -62,8 +64,8 @@ images_col = [[sg.Text('You choose from the list:')],
               [sg.Image(key='-IMAGE-')]]
 
 # ----- Full layout -----
-layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
-# layout = [[sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
+# layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
+layout = [[sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
 
 # --------------------------------- Create Window ---------------------------------
 window = sg.Window('Multiple Format Image Viewer', layout, resizable=True, location=(50,50), size =(800,800))
@@ -78,8 +80,15 @@ while True:
         break
     # Opciones del menú
     if event == 'Abrir':
-        sg.FileBrowse(file_types=(("Text Files", "*.tiff"),))
+    
         # sg.popup('About this program', 'Version 1.0', 'PySimpleGUI rocks...') --> PARA LA INFORMACION DE LA IMAGEN      
+        filename = sg.popup_get_file("Selecciona la imagen a cargar")
+        proccessed_image = convert_to_bytes(filename, resize=new_size)
+        window['-IMAGE-'].update(proccessed_image)
+        get_pixel_values(filename)
+    
+    if event == 'Guardar':
+        sg.popup_get_file("Guardar como", save_as= True)
 
     if event == '-FOLDER-':                         # Folder name was filled in, make a list of files in the folder
         folder = values['-FOLDER-']
@@ -98,11 +107,9 @@ while True:
             if values['-W-'] and values['-H-']:
                 new_size = int(values['-W-']), int(values['-H-'])
             else:
-                new_size = None
-                new_size = int(800), int(800) # Ajusto un tamaño fijo para cualquier imagen de 1080x720
-            proccessed_image = convert_to_bytes(filename, resize=new_size)
-            window['-IMAGE-'].update(proccessed_image)
-            get_pixel_values(filename)
+                proccessed_image = convert_to_bytes(filename, resize=new_size)
+                window['-IMAGE-'].update(proccessed_image)
+                get_pixel_values(filename)
         except Exception as E:
             print(f'** Error {E} **')
             pass        # something weird happened making the full filename
