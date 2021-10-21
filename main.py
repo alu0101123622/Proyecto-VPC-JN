@@ -2,10 +2,26 @@ import PySimpleGUI as sg
 # import PySimpleGUIQt as sg
 import os.path
 import PIL.Image
+from pathlib import Path
 import io
 import base64
 
 new_size = int(800), int(800) # Ajusto un tamaño fijo para cualquier imagen de 800x800
+filename = ""
+working_copy_filename = ""
+
+def create_working_copy(filename):
+    img = PIL.Image.open(filename)
+    working_copy_filename = os.path.splitext(filename)[0] + "WC.tiff"
+    print(working_copy_filename)
+    img.save(working_copy_filename)
+    del img
+    return working_copy_filename
+
+def save_as(saves_as_filename):
+    img = PIL.Image.open(working_copy_filename)
+    img.save(saves_as_filename + ".tiff")
+    del img
 
 def get_pixel_values(filename):
     img = PIL.Image.open(filename, 'r')
@@ -85,34 +101,14 @@ while True:
         filename = sg.popup_get_file("Selecciona la imagen a cargar")
         proccessed_image = convert_to_bytes(filename, resize=new_size)
         window['-IMAGE-'].update(proccessed_image)
+        working_copy_filename = create_working_copy(filename)
         get_pixel_values(filename)
     
     if event == 'Guardar':
-        sg.popup_get_file("Guardar como", save_as= True)
-
-    if event == '-FOLDER-':                         # Folder name was filled in, make a list of files in the folder
-        folder = values['-FOLDER-']
-        try:
-            file_list = os.listdir(folder)         # get list of files in folder
-        except:
-            file_list = []
-        fnames = [f for f in file_list if os.path.isfile(
-            os.path.join(folder, f)) and f.lower().endswith((".png", ".jpg", "jpeg", ".tiff", ".tif", ".bmp", ".tfe"))]
-        window['-FILE LIST-'].update(fnames)
-    elif event == '-FILE LIST-':    # A file was chosen from the listbox
-        try:
-            filename = os.path.join(values['-FOLDER-'], values['-FILE LIST-'][0])
-            shortname = values['-FILE LIST-'][0] # Prefiero solo el nombre y omitir la ruta.
-            window['-TOUT-'].update(shortname)
-            if values['-W-'] and values['-H-']:
-                new_size = int(values['-W-']), int(values['-H-'])
-            else:
-                proccessed_image = convert_to_bytes(filename, resize=new_size)
-                window['-IMAGE-'].update(proccessed_image)
-                get_pixel_values(filename)
-        except Exception as E:
-            print(f'** Error {E} **')
-            pass        # something weird happened making the full filename
+        new_filename = sg.popup_get_file("Guardar como", save_as= True)
+        print(new_filename)
+        save_as(new_filename)
 
 # --------------------------------- Close & Exit ---------------------------------
+os.remove(working_copy_filename)
 window.close()
