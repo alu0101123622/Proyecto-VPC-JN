@@ -29,6 +29,18 @@ def get_pixel_values(filename):
     pixel_values = list(img.getdata())
     print('Los datos de la imagen son widht: %s, height: %s' % (str(width), str(height)))
     print(pixel_values[0])
+    del img
+
+def colour_to_grayscale():
+    img = PIL.Image.open(working_copy_filename)
+    pixs = img.load()
+    for i in range(img.size[0]):
+        for j in range(img.size[1]):
+            grey_value = round(0.222 * pixs[i,j][0] + 0.707 * pixs[i,j][1] + 0.071 * pixs[i,j][2])
+            pixs[i,j] = (grey_value, grey_value, grey_value)
+    img.save(working_copy_filename)
+    del img
+
 
 def convert_to_bytes(file_or_bytes, resize=None):
     '''
@@ -66,25 +78,24 @@ def convert_to_bytes(file_or_bytes, resize=None):
 sg.theme('Dark Grey 3')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Información', ['Imprimir datos'],],
-            ['Herramientas',]]
+            ['Herramientas', ],
+            ['Transformación', ['Escala de grises'],]]
 
-# First the window layout...2 columns
-
-left_col = [[sg.Text('Folder'), sg.In(size=(25,1), enable_events=True ,key='-FOLDER-'), sg.FolderBrowse()],
-            [sg.Listbox(values=[], enable_events=True, size=(40,20),key='-FILE LIST-')],
-            [sg.Text('Resize to'), sg.In(key='-W-', size=(5,1)), sg.In(key='-H-', size=(5,1))]]
 
 # For now will only show the name of the file that was chosen
-images_col = [[sg.Text('You choose from the list:')],
-              [sg.Text(size=(None,None), key='-TOUT-')],
+image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-')],
               [sg.Image(key='-IMAGE-')]]
+            
+imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-')],
+              [sg.Image(key='-IMAGEWC-')]]
 
 # ----- Full layout -----
-# layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
-layout = [[sg.Column(images_col, element_justification='c')], [sg.Menu(menu_def)]]
+# layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(image_col, element_justification='c')], [sg.Menu(menu_def)]]
+layout = [[sg.Column(image_col, element_justification='c'), sg.VSeparator(), sg.Column(imagewc_col, element_justification='c'), [sg.Menu(menu_def)]]]
 
 # --------------------------------- Create Window ---------------------------------
-window = sg.Window('Multiple Format Image Viewer', layout, resizable=True, location=(50,50), size =(800,800))
+window = sg.Window('Multiple Format Image Viewer', layout, resizable=True, location=(50,50), size =(800,800)).Finalize()
+window.Maximize()
 
 # ----- Run the Event Loop -----
 # --------------------------------- Event Loop ---------------------------------
@@ -101,6 +112,7 @@ while True:
         filename = sg.popup_get_file("Selecciona la imagen a cargar")
         proccessed_image = convert_to_bytes(filename, resize=new_size)
         window['-IMAGE-'].update(proccessed_image)
+        window['-NOMBRE_IMAGEN-'].update(filename)
         working_copy_filename = create_working_copy(filename)
         get_pixel_values(filename)
     
@@ -108,6 +120,13 @@ while True:
         new_filename = sg.popup_get_file("Guardar como", save_as= True)
         print(new_filename)
         save_as(new_filename)
+    
+    # Opciones de edición
+    if event == 'Escala de grises':
+        colour_to_grayscale()
+        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename+ " GREYSCALE")
 
 # --------------------------------- Close & Exit ---------------------------------
 os.remove(working_copy_filename)
