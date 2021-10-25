@@ -1,28 +1,26 @@
+"""
+    Universidad de La Laguna - Grado en Ingenería Informática
+    Cuarto Curso - Visión por Computador
+    2021-2022
+
+    Autores:    Jorge Acevedo de León       -   alu0101123622@ull.edu.es
+                Nerea Rodríguez Hernández   -   alu0101215693@ull.edu.es
+    
+    Fichero main.py: Programa principal del proyecto
+"""
 import PySimpleGUI as sg
-# import PySimpleGUIQt as sg
 import os.path
 import PIL.Image
 from pathlib import Path
 import io
 import base64
+import utility
 
 new_size = int(800), int(800) # Ajusto un tamaño fijo para cualquier imagen de 800x800
 filename = ""
-working_copy_filename = ""
 
-def create_working_copy(filename):
-    img = PIL.Image.open(filename)
-    working_copy_filename = os.path.splitext(filename)[0] + "WC.tiff"
-    print(working_copy_filename)
-    img.save(working_copy_filename)
-    del img
-    return working_copy_filename
-
-def save_as(saves_as_filename):
-    img = PIL.Image.open(working_copy_filename)
-    img.save(saves_as_filename + ".tiff")
-    del img
-
+# Método encargado de obtener los valores de las imágenes
+# de width y heigth
 def get_pixel_values(filename):
     img = PIL.Image.open(filename, 'r')
     width, height = img.size
@@ -31,6 +29,8 @@ def get_pixel_values(filename):
     print(pixel_values[0])
     del img
 
+# Método encargado de realizar la transformación de la imagen
+# a una imagen en escala de grises
 def colour_to_grayscale():
     img = PIL.Image.open(working_copy_filename)
     pixs = img.load()
@@ -41,18 +41,9 @@ def colour_to_grayscale():
     img.save(working_copy_filename)
     del img
 
-
+# Método encargado de convertir en bytes y la imagen cambiará
+# el tamaño de una imagen si es un archivo o un objeto de base64 bytes
 def convert_to_bytes(file_or_bytes, resize=None):
-    '''
-    Will convert into bytes and optionally resize an image that is a file or a base64 bytes object.
-    Turns into  PNG format in the process so that can be displayed by tkinter
-    :param file_or_bytes: either a string filename or a bytes base64 image object
-    :type file_or_bytes:  (Union[str, bytes])
-    :param resize:  optional new size
-    :type resize: (Tuple[int, int] or None)
-    :return: (bytes) a byte-string object
-    :rtype: (bytes)
-    '''
     if isinstance(file_or_bytes, str):
         img = PIL.Image.open(file_or_bytes)
     else:
@@ -73,61 +64,56 @@ def convert_to_bytes(file_or_bytes, resize=None):
         return bio.getvalue()
 
 
-# --------------------------------- Define Layout ---------------------------------
-
-sg.theme('Dark Grey 3')
+# ---------------- Definición de Layout ----------------
+sg.theme('Light Blue 2')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Información', ['Imprimir datos'],],
             ['Herramientas', ],
             ['Transformación', ['Escala de grises'],]]
 
-
-# For now will only show the name of the file that was chosen
+# Por ahora solo mostrará el nombre del archivo que se eligió
 image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-')],
               [sg.Image(key='-IMAGE-')]]
             
 imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-')],
               [sg.Image(key='-IMAGEWC-')]]
 
-# ----- Full layout -----
+# ---------------- Layout Completo ----------------
 # layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(image_col, element_justification='c')], [sg.Menu(menu_def)]]
 layout = [[sg.Column(image_col, element_justification='c'), sg.VSeparator(), sg.Column(imagewc_col, element_justification='c'), [sg.Menu(menu_def)]]]
 
-# --------------------------------- Create Window ---------------------------------
+# ---------------- Creación de ventana ----------------
 window = sg.Window('Multiple Format Image Viewer', layout, resizable=True, location=(50,50), size =(800,800)).Finalize()
 window.Maximize()
 
-# ----- Run the Event Loop -----
-# --------------------------------- Event Loop ---------------------------------
+# ---------------- Bucle de eventos ----------------
 while True:
     event, values = window.read()
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
     if event == sg.WIN_CLOSED or event == 'Exit':
         break
-    # Opciones del menú
+    # Opciones de la barra superior principal
     if event == 'Abrir':
-    
         # sg.popup('About this program', 'Version 1.0', 'PySimpleGUI rocks...') --> PARA LA INFORMACION DE LA IMAGEN      
         filename = sg.popup_get_file("Selecciona la imagen a cargar")
         proccessed_image = convert_to_bytes(filename, resize=new_size)
         window['-IMAGE-'].update(proccessed_image)
         window['-NOMBRE_IMAGEN-'].update(filename)
-        working_copy_filename = create_working_copy(filename)
+        working_copy_filename = utility.create_working_copy(filename)
         get_pixel_values(filename)
     
     if event == 'Guardar':
         new_filename = sg.popup_get_file("Guardar como", save_as= True)
         print(new_filename)
-        save_as(new_filename)
+        utility.save_as(new_filename)
     
     # Opciones de edición
     if event == 'Escala de grises':
         colour_to_grayscale()
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)
-        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename+ " GREYSCALE")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + " GREYSCALE")
 
-# --------------------------------- Close & Exit ---------------------------------
 os.remove(working_copy_filename)
 window.close()
