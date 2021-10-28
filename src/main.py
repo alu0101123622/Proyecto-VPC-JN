@@ -15,19 +15,10 @@ from pathlib import Path
 import io
 import base64
 import utility
+import function
 
 new_size = int(800), int(800) # Ajusto un tamaño fijo para cualquier imagen de 800x800
 filename = ""
-
-# Método encargado de obtener los valores de las imágenes
-# de width y heigth
-def get_pixel_values(filename):
-    img = PIL.Image.open(filename, 'r')
-    width, height = img.size
-    pixel_values = list(img.getdata())
-    print('Los datos de la imagen son widht: %s, height: %s' % (str(width), str(height)))
-    print(pixel_values[0])
-    del img
 
 # Método encargado de realizar la transformación de la imagen
 # a una imagen en escala de grises
@@ -101,7 +92,8 @@ while True:
         window['-IMAGE-'].update(proccessed_image)
         window['-NOMBRE_IMAGEN-'].update(filename)
         working_copy_filename = utility.create_working_copy(filename)
-        get_pixel_values(filename)
+        pixels = function.get_pixel_values(filename)
+        function.frequency(pixels)
     
     if event == 'Guardar':
         new_filename = sg.popup_get_file("Guardar como", save_as= True)
