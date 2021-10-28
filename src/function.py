@@ -53,6 +53,7 @@ def frequency(pixel_values):
               blue_pix_freq[pixel[2]] = 1
       for pixel in sorted(blue_pix_freq):
           print(f'{pixel}: {blue_pix_freq[pixel]}')
+      return red_pix_freq, green_pix_freq, blue_pix_freq
     else:                                           # Imagen a B&W
       for pixel in pixel_values:
           if pixel in grey_pix_freq:
@@ -60,4 +61,5 @@ def frequency(pixel_values):
           else:
               grey_pix_freq[pixel] = 1
       for pixel in sorted(grey_pix_freq):
-          print(f'{pixel}: {grey_pix_freq[pixel]}') 
+          print(f'{pixel}: {grey_pix_freq[pixel]}')
+      return grey_pix_freq 
