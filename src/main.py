@@ -86,15 +86,17 @@ while True:
         break
     # Opciones de la barra superior principal
     if event == 'Abrir':
-        # sg.popup('About this program', 'Version 1.0', 'PySimpleGUI rocks...') --> PARA LA INFORMACION DE LA IMAGEN      
+        # sg.popup('About this program', 'Version 1.0', 'PySimpleGUI rocks...') #--> PARA LA INFORMACION DE LA IMAGEN      
         filename = sg.popup_get_file("Selecciona la imagen a cargar")
         proccessed_image = convert_to_bytes(filename, resize=new_size)
         window['-IMAGE-'].update(proccessed_image)
         window['-NOMBRE_IMAGEN-'].update(filename)
         working_copy_filename = utility.create_working_copy(filename)
         pixels = function.get_pixel_values(filename)
-        function.frequency(pixels)
-    
+        frequency = function.frequency(pixels)
+        function.histogram(sorted(pixels))
+
+
     if event == 'Guardar':
         new_filename = sg.popup_get_file("Guardar como", save_as= True)
         print(new_filename)

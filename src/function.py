@@ -9,6 +9,7 @@
     Fichero main.py: Programa principal del proyecto
 """
 from typing import Tuple
+import matplotlib.pyplot as plt
 import PIL.Image
 
 # Método encargado de obtener los valores de las imágenes
@@ -60,6 +61,14 @@ def frequency(pixel_values):
               grey_pix_freq[pixel] += 1
           else:
               grey_pix_freq[pixel] = 1
-      for pixel in sorted(grey_pix_freq):
-          print(f'{pixel}: {grey_pix_freq[pixel]}')
+      #for pixel in sorted(grey_pix_freq):
+       #   print(f'{pixel}: {grey_pix_freq[pixel]}')
       return grey_pix_freq 
+
+#Método para la creación del histograma
+def histogram(array):
+    n, bins, patches=plt.hist(array, 10, range=[0, 255])
+    plt.xlabel("Values")
+    plt.ylabel("Frequency")
+    plt.title("Histogram")
+    plt.show()
