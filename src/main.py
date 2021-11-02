@@ -94,7 +94,8 @@ while True:
         working_copy_filename = utility.create_working_copy(filename)
         pixels = function.get_pixel_values(filename)
         frequency = function.frequency(pixels)
-        function.histogram(sorted(pixels))
+        utility.info_imagen(filename, pixels)
+        function.draw_histogram(sorted(pixels))
 
 
     if event == 'Guardar':
@@ -106,6 +107,7 @@ while True:
     if event == 'Escala de grises':
         colour_to_grayscale()
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        print(proccessed_image)
         window['-IMAGEWC-'].update(proccessed_image)
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + " GREYSCALE")
 

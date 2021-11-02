@@ -16,9 +16,9 @@ import PIL.Image
 # de width y heigth
 def get_pixel_values(filename):
     img = PIL.Image.open(filename, 'r')
-    width, height = img.size
+    #width, height = img.size
     pixel_values = list(img.getdata())
-    print('Los datos de la imagen son widht: %s, height: %s' % (str(width), str(height)))
+    #print('Los datos de la imagen son widht: %s, height: %s' % (str(width), str(height)))
     #print(pixel_values)
     del img
     return pixel_values
@@ -66,8 +66,8 @@ def frequency(pixel_values):
       return grey_pix_freq 
 
 #Método para la creación del histograma
-def histogram(array):
-    n, bins, patches=plt.hist(array, 10, range=[0, 255])
+def draw_histogram(array):
+    plt.hist(array, 10, range=[0, 255])
     plt.xlabel("Values")
     plt.ylabel("Frequency")
     plt.title("Histogram")

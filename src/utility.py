@@ -30,3 +30,19 @@ def save_as(saves_as_filename):
     img = PIL.Image.open(working_copy_filename)
     img.save(saves_as_filename + ".tiff")
     del img
+
+def info_imagen(filename, pixels):
+    img = PIL.Image.open(filename, 'r')
+    width, height = img.size
+    print('Los datos de la imagen son ancho: %s, largo: %s' % (str(width), str(height)))
+    print('Max:', max(pixels), 'Min:', min(pixels))
+    print('Brillo:', brightness(img.size, pixels))
+
+def brightness(size, pixels):
+    sum = 0
+    for pixel in pixels:
+        sum += int(pixel)
+    width, height = size
+    size = width * height
+    bright = sum / size
+    return bright
