@@ -65,10 +65,33 @@ def frequency(pixel_values):
        #   print(f'{pixel}: {grey_pix_freq[pixel]}')
       return grey_pix_freq 
 
-#Método para la creación del histograma
-def draw_histogram(array):
-    plt.hist(array, 10, range=[0, 255])
-    plt.xlabel("Values")
-    plt.ylabel("Frequency")
-    plt.title("Histogram")
+#Método para la creación del histograma de valores absolutos
+def draw_absolute_histogram(array):
+    plt.hist(array, 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black")
+    plt.xlabel("Valor de intensidad de color")
+    plt.ylabel("Frecuencia")
+    plt.title("Histograma de valores absolutos")
     plt.show()
+
+#Método para la creación del histograma de valores acumulativos
+def draw_cumulative_histogram(array):
+    plt.hist(array, 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
+    plt.xlabel("Valor de intensidad de color")
+    plt.ylabel("Frecuencia")
+    plt.title("Histograma de valores acumulativos")
+    plt.show()
+
+# Método encargado del calculo del brillo
+def brightness(size, pixels):
+    sum = 0
+    for pixel in pixels:
+        sum += int(pixel)
+    width, height = size
+    size = width * height
+    bright = sum / size
+    return bright
+
+def contrast(size, bright, pixels):
+    sum = 0
+    for pixel in pixels:
+        print("repasar")

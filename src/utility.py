@@ -11,6 +11,7 @@
 """
 import os.path
 import PIL.Image
+import function
 
 working_copy_filename = ""
 
@@ -31,18 +32,12 @@ def save_as(saves_as_filename):
     img.save(saves_as_filename + ".tiff")
     del img
 
+# Método encargado de mostrar la información de la imagen
 def info_imagen(filename, pixels):
     img = PIL.Image.open(filename, 'r')
     width, height = img.size
     print('Los datos de la imagen son ancho: %s, largo: %s' % (str(width), str(height)))
     print('Max:', max(pixels), 'Min:', min(pixels))
-    print('Brillo:', brightness(img.size, pixels))
+    #print('Brillo:', function.brightness(img.size, pixels))
+    return 'Los datos de la imagen son ancho: %s, largo: %s' % (str(width), str(height)) + ' Max:', str(max(pixels)), ' Min:', str(min(pixels))
 
-def brightness(size, pixels):
-    sum = 0
-    for pixel in pixels:
-        sum += int(pixel)
-    width, height = size
-    size = width * height
-    bright = sum / size
-    return bright
