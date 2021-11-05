@@ -65,17 +65,15 @@ menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Transformación', ['Escala de grises'],]]
 
 # Por ahora solo mostrará el nombre del archivo que se eligió
-image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-')],
-              [sg.Image(key='-IMAGE-')],
-              [sg.Text(information_text, background_color= "grey", key = '-INFO_TEXT-')]]
+image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 12 bold')],
+              [sg.Image(key='-IMAGE-', visible = False)],
+              [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 12 bold')]]
             
-imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-')],
-              [sg.Image(key='-IMAGEWC-')],
-              [sg.Text(information_text, background_color= "grey", key = '-INFO_TEXT-')]]
+imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-',  visible = False)],
+              [sg.Image(key='-IMAGEWC-', visible = False )],
+              [sg.Text(information_text, background_color= "grey", key = '-INFO_TEXT-', visible = False)]]
 
-status_bar = [[sg.Text(information_text, background_color= "grey", key = '-INFO_TEXT-')]]
 # ---------------- Layout Completo ----------------
-# layout = [[sg.Column(left_col, element_justification='c'), sg.VSeperator(),sg.Column(image_col, element_justification='c')], [sg.Menu(menu_def)]]
 layout = [[sg.Column(image_col, element_justification='c'),
            sg.VSeparator(),
            sg.Column(imagewc_col, element_justification='c'),
@@ -87,19 +85,21 @@ window.Maximize()
 
 
 if debug == 1:
-    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/huevo.tif'
+    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
+    window['-IMAGE-'].update(visible = True)
     window['-NOMBRE_IMAGEN-'].update(filename)
+    window['-NOMBRE_IMAGEN-'].update(visible = True)
+
     working_copy_filename = utility.create_working_copy(filename)
     pixels = function.get_pixel_values(filename)
-    histogram = function.histogram(pixels)
-    normalizated_histogram = function.histogram_normalized(histogram, len(pixels))
+    # pixel_frequency = function.calculate_pixel_frequency(pixels)
+    # function.draw_absolute_histogram(pixel_frequency)
+    # normalizated_frequency = function.calculate_normalized_frequencies(pixel_frequency, len(pixels))
     information_text = utility.info_imagen(filename, pixels)
-    print(information_text)
     window['-INFO_TEXT-'].update(information_text)
-    # function.draw_absolute_histogram(sorted(pixels))
-    # function.draw_cumulative_histogram(sorted(pixels))
+    window['-INFO_TEXT-'].update(visible = True)
     
 
 # ---------------- Bucle de eventos ----------------
@@ -121,7 +121,6 @@ while True:
         pixels = function.get_pixel_values(filename)
         frequency = function.frequency(pixels)
         utility.info_imagen(filename, pixels)
-        function.draw_histogram(sorted(pixels))
 
 
     if event == 'Guardar':

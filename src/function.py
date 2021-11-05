@@ -22,13 +22,15 @@ def get_pixel_values(filename):
     #print(pixel_values)
     del img
     return pixel_values
+
 ## Method that calculates the histogram of the colors of the image
-def histogram(pixel_values):
+## He cambiado el nombre a calculate_pixel_frequency ya que representa mejor lo que hace la función
+def calculate_pixel_frequency(pixel_values):
     grey_pix_freq =  {}
     red_pix_freq =   {}
     green_pix_freq = {}
     blue_pix_freq =  {}
-    print(type(pixel_values[0]))
+#    print(type(pixel_values[0]))
     if type(pixel_values[0]) == tuple:   # Color image
         # RED
         for pixel in pixel_values:
@@ -49,7 +51,8 @@ def histogram(pixel_values):
             else:
                 blue_pix_freq[pixel[2]] = 1
         return red_pix_freq, green_pix_freq, blue_pix_freq
-    else:                                           # B&W Image
+    # B&W Image
+    else:                                      
         for pixel in pixel_values:
             if pixel in grey_pix_freq:
                 grey_pix_freq[pixel] += 1
@@ -58,15 +61,23 @@ def histogram(pixel_values):
         return grey_pix_freq 
 
 ## Method that calculates the normalized histogram of the colors of the image
-def histogram_normalized(histogram, size):
-    print(size)
-    print(histogram)
-    for pixel in sorted(histogram):
-        histogram[pixel] = histogram[pixel] / size
-    print(histogram)
+## He cambiado el nombre a calculate_normalized_frequencies ya que representa mejor lo que hace la función
+def  calculate_normalized_frequencies(frequencies, size):
+    # print(size)
+    # print(frequencies)
+    # factor = 1.0/sum(frequencies.values())
+    # for pixel in frequencies:
+    #     frequencies[pixel] = frequencies[pixel] * factor
+    normalized_frequencies = frequencies
+    for pixel in frequencies:
+        normalized_frequencies[pixel] = frequencies[pixel] /size
+    return normalized_frequencies    
+    
 ##  Method for creating the histogram of absolute values
 def draw_absolute_histogram(array):
-    plt.hist(array, 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black")
+    keys = array.keys()
+    values = array.values()
+    plt.bar(keys, values, color='black')
     plt.xlabel("Valor de intensidad de color")
     plt.ylabel("Frecuencia")
     plt.title("Histograma de valores absolutos")
@@ -79,6 +90,7 @@ def draw_cumulative_histogram(array):
     plt.ylabel("Frecuencia")
     plt.title("Histograma de valores acumulativos")
     plt.show()
+
 
 ## Brightness calculation method
 def brightness(size, pixels):
