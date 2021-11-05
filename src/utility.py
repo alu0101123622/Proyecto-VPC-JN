@@ -36,8 +36,9 @@ def save_as(saves_as_filename):
 def info_imagen(filename, pixels):
     img = PIL.Image.open(filename, 'r')
     width, height = img.size
-    print('Los datos de la imagen son ancho: %s, largo: %s' % (str(width), str(height)))
-    print('Max:', max(pixels), 'Min:', min(pixels))
+    
+    #print('Los datos de la imagen son ancho: %s, largo: %s' % (str(width), str(height)))
+    #print('Max:', max(pixels), 'Min:', min(pixels))
+    #print(function.contrast(img.size, function.brightness(img.size, pixels), pixels))
     #print('Brillo:', function.brightness(img.size, pixels))
-    return 'Los datos de la imagen son ancho: %s, largo: %s' % (str(width), str(height)) + ' Max:', str(max(pixels)), ' Min:', str(min(pixels))
-
+    return 4 #('Los datos de la imagen son ancho: %s, largo: %s' % (str(width), str(height)))

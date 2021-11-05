@@ -12,8 +12,8 @@ from typing import Tuple
 import matplotlib.pyplot as plt
 import PIL.Image
 
-# Método encargado de obtener los valores de las imágenes
-# de width y heigth
+## Method for obtaining the values ​​of the images 
+## of width and length
 def get_pixel_values(filename):
     img = PIL.Image.open(filename, 'r')
     #width, height = img.size
@@ -22,50 +22,49 @@ def get_pixel_values(filename):
     #print(pixel_values)
     del img
     return pixel_values
-##¡ Método que calcula la precuencia de los colores de la imagen
-def frequency(pixel_values):
+## Method that calculates the histogram of the colors of the image
+def histogram(pixel_values):
     grey_pix_freq =  {}
     red_pix_freq =   {}
     green_pix_freq = {}
     blue_pix_freq =  {}
     print(type(pixel_values[0]))
-    if type(pixel_values[0]) == tuple:   # Imagen a color
-      # Para el rojo
-      for pixel in pixel_values:
-          if pixel[0] in red_pix_freq:
-              red_pix_freq[pixel[0]] += 1
-          else:
-              red_pix_freq[pixel[0]] = 1
-      for pixel in sorted(red_pix_freq):
-          print(f'{pixel}: {red_pix_freq[pixel]}')
-      # Para el verde
-      for pixel in pixel_values:
-          if pixel[1] in green_pix_freq:
-              green_pix_freq[pixel[1]] += 1
-          else:
-              green_pix_freq[pixel[1]] = 1
-      for pixel in sorted(green_pix_freq):
-          print(f'{pixel}: {green_pix_freq[pixel]}')
-      # Para el blue
-      for pixel in pixel_values:
-          if pixel[2] in blue_pix_freq:
-              blue_pix_freq[pixel[2]] += 1
-          else:
-              blue_pix_freq[pixel[2]] = 1
-      for pixel in sorted(blue_pix_freq):
-          print(f'{pixel}: {blue_pix_freq[pixel]}')
-      return red_pix_freq, green_pix_freq, blue_pix_freq
-    else:                                           # Imagen a B&W
-      for pixel in pixel_values:
-          if pixel in grey_pix_freq:
-              grey_pix_freq[pixel] += 1
-          else:
-              grey_pix_freq[pixel] = 1
-      #for pixel in sorted(grey_pix_freq):
-       #   print(f'{pixel}: {grey_pix_freq[pixel]}')
-      return grey_pix_freq 
+    if type(pixel_values[0]) == tuple:   # Color image
+        # RED
+        for pixel in pixel_values:
+            if pixel[0] in red_pix_freq:
+                red_pix_freq[pixel[0]] += 1
+            else:
+                red_pix_freq[pixel[0]] = 1
+      # GREEN
+        for pixel in pixel_values:
+            if pixel[1] in green_pix_freq:
+                green_pix_freq[pixel[1]] += 1
+            else:
+                green_pix_freq[pixel[1]] = 1
+        # BLUE
+        for pixel in pixel_values:
+            if pixel[2] in blue_pix_freq:
+                blue_pix_freq[pixel[2]] += 1
+            else:
+                blue_pix_freq[pixel[2]] = 1
+        return red_pix_freq, green_pix_freq, blue_pix_freq
+    else:                                           # B&W Image
+        for pixel in pixel_values:
+            if pixel in grey_pix_freq:
+                grey_pix_freq[pixel] += 1
+            else:
+                grey_pix_freq[pixel] = 1
+        return grey_pix_freq 
 
-#Método para la creación del histograma de valores absolutos
+## Method that calculates the normalized histogram of the colors of the image
+def histogram_normalized(histogram, size):
+    print(size)
+    print(histogram)
+    for pixel in sorted(histogram):
+        histogram[pixel] = histogram[pixel] / size
+    print(histogram)
+##  Method for creating the histogram of absolute values
 def draw_absolute_histogram(array):
     plt.hist(array, 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black")
     plt.xlabel("Valor de intensidad de color")
@@ -73,7 +72,7 @@ def draw_absolute_histogram(array):
     plt.title("Histograma de valores absolutos")
     plt.show()
 
-#Método para la creación del histograma de valores acumulativos
+## Method for creating the histogram of cumulative values
 def draw_cumulative_histogram(array):
     plt.hist(array, 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
     plt.xlabel("Valor de intensidad de color")
@@ -81,7 +80,7 @@ def draw_cumulative_histogram(array):
     plt.title("Histograma de valores acumulativos")
     plt.show()
 
-# Método encargado del calculo del brillo
+## Brightness calculation method
 def brightness(size, pixels):
     sum = 0
     for pixel in pixels:
@@ -91,7 +90,7 @@ def brightness(size, pixels):
     bright = sum / size
     return bright
 
+## Contrast calculation method
 def contrast(size, bright, pixels):
-    sum = 0
-    for pixel in pixels:
-        print("repasar")
+    print(bright)
+    print("HOLA")

@@ -87,13 +87,14 @@ window.Maximize()
 
 
 if debug == 1:
-    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.06.tiff'
+    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/huevo.tif'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
     window['-NOMBRE_IMAGEN-'].update(filename)
     working_copy_filename = utility.create_working_copy(filename)
     pixels = function.get_pixel_values(filename)
-    frequency = function.frequency(pixels)
+    histogram = function.histogram(pixels)
+    normalizated_histogram = function.histogram_normalized(histogram, len(pixels))
     information_text = utility.info_imagen(filename, pixels)
     print(information_text)
     window['-INFO_TEXT-'].update(information_text)
