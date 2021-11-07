@@ -1,18 +1,11 @@
 import PIL.Image
 
-def color_array():
-    array = []
-    array.append(0)
-    color = -1
-    for color in range(255):
-        array.append(color + 1)
-    return array
-
 def make_grayscale_table():
-    color_array()
-    table = []
-    for color in len(color_array()):
-      print("adios")
+    grayscaleLUT = [
+        [r * 0.222 for r in range(256)],
+        [g * 0.707 for g in range(256)],
+        [b * 0.071 for b in range(256)],
+    ]
 
 # Método encargado de realizar la transformación de la imagen
 # a una imagen en escala de grises
