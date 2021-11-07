@@ -16,23 +16,12 @@ import io
 import base64
 import utility
 import function
+import table
 
 new_size = int(700), int(700) # Ajusto un tamaño fijo para cualquier imagen de 800x800
 filename = ""
 debug = 1
 information_text = ''
-
-# Método encargado de realizar la transformación de la imagen
-# a una imagen en escala de grises
-def colour_to_grayscale():
-    img = PIL.Image.open(working_copy_filename)
-    pixs = img.load()
-    for i in range(img.size[0]):
-        for j in range(img.size[1]):
-            grey_value = round(0.222 * pixs[i,j][0] + 0.707 * pixs[i,j][1] + 0.071 * pixs[i,j][2])
-            pixs[i,j] = (grey_value, grey_value, grey_value)
-    img.save(working_copy_filename)
-    del img
 
 # Método encargado de convertir en bytes y la imagen cambiará
 # el tamaño de una imagen si es un archivo o un objeto de base64 bytes
@@ -85,7 +74,8 @@ window.Maximize()
 
 
 if debug == 1:
-    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
+    #filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
+    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.02.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
     window['-IMAGE-'].update(visible = True)
@@ -130,7 +120,7 @@ while True:
     
     # Opciones de edición
     if event == 'Escala de grises':
-        colour_to_grayscale()
+        table.colour_to_grayscale(working_copy_filename)
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         print(proccessed_image)
         window['-IMAGEWC-'].update(proccessed_image)

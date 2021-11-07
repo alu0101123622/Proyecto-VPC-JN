@@ -95,10 +95,14 @@ def draw_cumulative_histogram(array):
 ## Brightness calculation method
 def brightness(size, pixels):
     sum = 0
-    for pixel in pixels:
-        sum += int(pixel)
     width, height = size
     size = width * height
+    if (len(pixels[0]) == 3):
+        for pixel in pixels:
+            sum += pixel[0] + pixel[1] + pixel[2]
+    else:
+        for pixel in pixels:
+            sum += int(pixel)
     bright = sum / size
     return bright
 
