@@ -74,8 +74,10 @@ window.Maximize()
 
 
 if debug == 1:
-    #filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
-    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.02.tiff'
+    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'  
+    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
+
+    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.02.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
     window['-IMAGE-'].update(visible = True)
@@ -84,10 +86,10 @@ if debug == 1:
 
     working_copy_filename = utility.create_working_copy(filename)
     pixels = function.get_pixel_values(filename)
-    # pixel_frequency = function.calculate_pixel_frequency(pixels)
-    # function.draw_absolute_histogram(pixel_frequency)
+    pixel_frequency = function.calculate_pixel_frequency(pixels)
+    function.draw_absolute_histogram(pixel_frequency)
     # normalizated_frequency = function.calculate_normalized_frequencies(pixel_frequency, len(pixels))
-    information_text = utility.info_imagen(filename, pixels)
+    information_text = utility.info_imagen(filename, pixel_frequency)
     window['-INFO_TEXT-'].update(information_text)
     window['-INFO_TEXT-'].update(visible = True)
     

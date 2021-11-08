@@ -37,7 +37,12 @@ def info_imagen(filename, pixels):
     img = PIL.Image.open(filename, 'r')
     width, height = img.size
     brightness = function.brightness(img.size, pixels)
-    return ('Height: %s | Width: %s | Brightness: %s | Max: %s | Min: %s' % (str(height), str(width), str(round(brightness, 3)), str(max(pixels)), str(min(pixels))))
+    contrast = function.contrast(img.size, brightness, pixels)
+    max = function.max_value(pixels)
+    min = function.min_value(pixels)
+    entropy = function.entropy(img.size, function.calculate_normalized_frequencies(pixels, img.size))
+    return ('Height: %s | Width: %s | Brightness: %s | Contrast: %s |  Min: %s | Max: %s | Entropy: %s' % 
+    (str(height), str(width), str(round(brightness, 3)), str(round(contrast, 3)), str(min), str(max), str(round(entropy, 3))))
 
     #print('Los datos de la imagen son ancho: %s, largo: %s' % (str(width), str(height)))
     #print('Max:', max(pixels), 'Min:', min(pixels))
