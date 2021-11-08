@@ -79,13 +79,11 @@ def  calculate_normalized_frequencies(frequencies, size):
 
 ##  Method for creating the histogram of absolute values
 def draw_absolute_histogram(pixel_frequency):
-    fig, axs = plt.subplot(3)
-    fig.suptitle('Primera prueba')
     if (len(pixel_frequency) == 3):
         # RED
         keys = pixel_frequency[0].keys()
         values = pixel_frequency[0].values()
-        plt.bar(keys, values, color='red')
+        plt.bar(keys, values, color='red', width=1.0)
         plt.xlabel("Valor de intensidad del color rojo")
         plt.ylabel("Frecuencia")
         plt.title("Histograma de valores absolutos")
@@ -93,7 +91,7 @@ def draw_absolute_histogram(pixel_frequency):
         # GREEN
         keys = pixel_frequency[1].keys()
         values = pixel_frequency[1].values()
-        plt.bar(keys, values, color='green')
+        plt.bar(keys, values, color='green', width=1.0)
         plt.xlabel("Valor de intensidad del color verde")
         plt.ylabel("Frecuencia")
         plt.title("Histograma de valores absolutos")
@@ -101,7 +99,7 @@ def draw_absolute_histogram(pixel_frequency):
         # BLUE
         keys = pixel_frequency[2].keys()
         values = pixel_frequency[2].values()
-        plt.bar(keys, values, color='blue')
+        plt.bar(keys, values, color='blue', width=1.0)
         plt.xlabel("Valor de intensidad del color azul")
         plt.ylabel("Frecuencia")
         plt.title("Histograma de valores absolutos")
