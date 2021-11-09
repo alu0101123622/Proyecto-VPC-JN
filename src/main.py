@@ -18,7 +18,7 @@ import utility
 import function
 import table
 
-new_size = int(700), int(700) # Ajusto un tamaño fijo para cualquier imagen de 800x800
+new_size = int(600), int(600) # Ajusto un tamaño fijo para cualquier imagen de 800x800
 filename = ""
 debug = 1
 information_text = ''
@@ -54,9 +54,9 @@ menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Transformación', ['Escala de grises'],]]
 
 # Por ahora solo mostrará el nombre del archivo que se eligió
-image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 12 bold')],
+image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 10 bold')],
               [sg.Image(key='-IMAGE-', visible = False)],
-              [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 12 bold')]]
+              [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 10 bold')]]
             
 imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-',  visible = False)],
               [sg.Image(key='-IMAGEWC-', visible = False )],
@@ -74,10 +74,10 @@ window.Maximize()
 
 
 if debug == 1:
-    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'  
-    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
+    #filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'  
+    #filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
 
-    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.02.tiff'
+    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
     window['-IMAGE-'].update(visible = True)
@@ -87,7 +87,7 @@ if debug == 1:
     working_copy_filename = utility.create_working_copy(filename)
     pixels = function.get_pixel_values(filename)
     pixel_frequency = function.calculate_pixel_frequency(pixels)
-    function.draw_absolute_histogram(pixel_frequency)
+    # function.draw_absolute_histogram(pixel_frequency)
     # normalizated_frequency = function.calculate_normalized_frequencies(pixel_frequency, len(pixels))
     information_text = utility.info_imagen(filename, pixel_frequency)
     window['-INFO_TEXT-'].update(information_text)
@@ -124,12 +124,12 @@ while True:
     if event == 'Escala de grises':
         table.colour_to_grayscale(working_copy_filename)
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
-        print(proccessed_image)
         window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + " GREYSCALE")
-        information_text = utility.info_imagen(filename, pixels)
-        print(information_text)
+        # information_text = utility.info_imagen(filename, pixels)
         window['-INFO_TEXT-'].update(information_text)
+        print("HOLA")
 
 os.remove(working_copy_filename)
 window.close()
