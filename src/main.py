@@ -17,6 +17,7 @@ import base64
 import utility
 import function
 import table
+import input
 
 new_size = int(600), int(600) # Ajusto un tamaño fijo para cualquier imagen de 800x800
 filename = ""
@@ -56,7 +57,8 @@ menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
 # Por ahora solo mostrará el nombre del archivo que se eligió
 image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 10 bold')],
               [sg.Image(key='-IMAGE-', visible = False)],
-              [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 10 bold')]]
+              [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 10 bold')],
+              [sg.Text(information_text ,background_color= "light green", key = '-MOUSE_POS-',  visible = False, relief= "raised", font='Arial 12 bold')]]
             
 imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-',  visible = False)],
               [sg.Image(key='-IMAGEWC-', visible = False )],
@@ -69,15 +71,15 @@ layout = [[sg.Column(image_col, element_justification='c'),
            [sg.Menu(menu_def)]]]
 
 # ---------------- Creación de ventana ----------------
-window = sg.Window('Multiple Format Image Viewer', layout, resizable=True, location=(50,50), size =(800,800)).Finalize()
+window = sg.Window('Multiple Format Image Viewer', layout, resizable=True).Finalize()
 window.Maximize()
 
 
 if debug == 1:
-    #filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'  
+    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'  
     #filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
 
-    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
+    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
     window['-IMAGE-'].update(visible = True)
@@ -92,11 +94,10 @@ if debug == 1:
     information_text = utility.info_imagen(filename, pixel_frequency)
     window['-INFO_TEXT-'].update(information_text)
     window['-INFO_TEXT-'].update(visible = True)
-    
 
 # ---------------- Bucle de eventos ----------------
 while True:
-    event, values = window.read()
+    event, values = window.read(timeout=25)
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
     if event == sg.WIN_CLOSED or event == 'Exit':
@@ -131,5 +132,22 @@ while True:
         window['-INFO_TEXT-'].update(information_text)
         print("HOLA")
 
+    # Instrucciones a ejecutarse cada 25 ms
+    x_pos = window['-IMAGE-'].Widget.winfo_rootx()
+    y_pos = window['-IMAGE-'].Widget.winfo_rooty()
+    img_height = window['-IMAGE-'].Widget.winfo_height()
+    img_width  = window['-IMAGE-'].Widget.winfo_width()
+
+    # print('x: %s, y: %s' % (x_pos, y_pos))
+    # print('h: %s, w: %s' % (img_height, img_width))
+    # print(window['-IMAGE-'].Widget.winfo_pointerxy())
+
+    if (input.is_cursor_over_image(x_pos , y_pos, img_height, img_width)):
+        window['-MOUSE_POS-'].update(visible = True)
+        window['-MOUSE_POS-'].update(input.cursor_pos(x_pos , y_pos, img_height, img_width))
+    else:
+        window['-MOUSE_POS-'].update(visible = False)
+
+    
 os.remove(working_copy_filename)
 window.close()
