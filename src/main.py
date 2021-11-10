@@ -76,10 +76,10 @@ window.Maximize()
 
 
 if debug == 1:
-    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'  
+    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'  
     #filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
 
-    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
+    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
     window['-IMAGE-'].update(visible = True)
