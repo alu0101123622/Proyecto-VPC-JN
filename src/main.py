@@ -52,6 +52,8 @@ sg.theme('Light Blue 2')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Información', ['Imprimir datos'],],
             ['Herramientas', ],
+            ['Operaciones Lineales', ['Transformaciones lineales por tramos', 'Ajuste lineal del brillo y contraste']],
+            ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']],
             ['Transformación', ['Escala de grises'],]]
 
 # Por ahora solo mostrará el nombre del archivo que se eligió
@@ -138,6 +140,8 @@ while True:
         # information_text = utility.info_imagen(filename, pixels)
         window['-INFO_TEXT-'].update(information_text)
 
+    if event == 'Ajuste lineal del brillo y constraste':
+        
     # Detección de click en imagen para crear ROI
     if event == '-IMAGE-':
         print(input.cursor_image_pos(x_pos , y_pos, img_height, img_width))

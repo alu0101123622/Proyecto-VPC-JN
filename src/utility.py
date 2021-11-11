@@ -44,9 +44,5 @@ def info_imagen(filename, pixels):
     return ('Height: %s | Width: %s | Brightness: %s | Contrast: %s |  Min: %s | Max: %s | Entropy: %s' % 
     (str(height), str(width), str(round(brightness, 3)), str(round(contrast, 3)), str(min), str(max), str(round(entropy, 3))))
 
-    #print('Los datos de la imagen son ancho: %s, largo: %s' % (str(width), str(height)))
-    #print('Max:', max(pixels), 'Min:', min(pixels))
-    #print(function.contrast(img.size, function.brightness(img.size, pixels), pixels))
-    #print('Brillo:', function.brightness(img.size, pixels))
 
 
