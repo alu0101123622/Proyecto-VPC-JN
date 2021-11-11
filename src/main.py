@@ -14,9 +14,6 @@ import PIL.Image
 from pathlib import Path
 import io
 import base64
-
-import pyautogui
-from pyautogui import position
 import utility
 import function
 import table
@@ -151,22 +148,25 @@ while True:
         new_contrast = sg.popup_get_text('Introduce el contrate:')
         table.colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigthness, new_contrast)
     # Detección de click en imagen para crear ROI
-    if event == '-IMAGE-':
-        print(input.cursor_image_pos(x_pos , y_pos, img_height, img_width))
-    if event == 'Región de interés':
+    if event == '-IMAGE-' :
         position = input.cursor_image_pos(x_pos , y_pos, img_height, img_width)
-        print("hola")
-        print(position)
-        cursor_pos = position()
-        print("HOLA")
-        print(cursor_pos)
-
+    
     # Instrucciones a ejecutarse cada 25 ms
     if (input.is_cursor_over_image(x_pos , y_pos, img_height, img_width)):
         window['-MOUSE_POS-'].update(visible = True)
         window['-MOUSE_POS-'].update(input.cursor_image_pos(x_pos , y_pos, img_height, img_width))
     else:
         window['-MOUSE_POS-'].update(visible = False)
+        if event == 'Región de interés':
+            position = input.cursor_image_pos(x_pos , y_pos, img_height, img_width)
+            print("hola")
+            print("HOLA")
+            positionA = position
+            position = input.cursor_image_pos(x_pos , y_pos, img_height, img_width)
+            positionB = position
+            print(positionA)
+            print(positionB)
+
 
     
 os.remove(working_copy_filename)
