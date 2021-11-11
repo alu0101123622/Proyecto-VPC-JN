@@ -12,7 +12,11 @@ def make_grayscale_table():
     return grayscaleLUT
 
 def make_linearfit_table(brightness, contrast, new_brightness, new_contrast):
-    if (constants == new_contrast):
+    brightness = round(float(brightness), 3)
+    constants = round(float(contrast), 3)
+    new_brightness = round(float(new_brightness), 3)
+    new_contrast = round(float(new_contrast), 3)
+    if (contrast == new_contrast):
         A = 1
     else:
         A = new_contrast / constants
@@ -41,7 +45,6 @@ def colour_to_grayscale(working_copy_filename):
     for i in range(img.size[0]):
         for j in range(img.size[1]):
             for k in range(3):
-            #grey_value = round(0.222 * pixs[i,j][0] + 0.707 * pixs[i,j][1] + 0.071 * pixs[i,j][2])
                 grey_value += grayscaleLUT[k][pixs[i,j][k]]
                 grey_value = round(grey_value)
             pixs[i,j] = (grey_value, grey_value, grey_value)
@@ -49,12 +52,10 @@ def colour_to_grayscale(working_copy_filename):
     img.save(working_copy_filename)
     del img
 
-def colour_to_linearlfit(working_copy_filename, pixels):
+def colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigthness, new_contrast):
     img  = PIL.Image.open(working_copy_filename)
     pixs = img.load()
-    brightness = function.brightness(working_copy_filename.size, pixels)
-    contrast = function.contrast(working_copy_filename.size, pixels)
-    linearfitLUT = make_linearfit_table(brightness, contrast, 150, 50)
+    linearfitLUT = make_linearfit_table(brightness, contrast, new_brigthness, new_contrast)
     linearfit_value = 0
     for i in range(img.size[0]):
         for j in range(img.size[1]):

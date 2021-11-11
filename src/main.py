@@ -51,7 +51,7 @@ def convert_to_bytes(file_or_bytes, resize=None):
 sg.theme('Light Blue 2')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Información', ['Imprimir datos'],],
-            ['Herramientas', ],
+            ['Herramientas', ['Región de interés']],
             ['Operaciones Lineales', ['Transformaciones lineales por tramos', 'Ajuste lineal del brillo y contraste']],
             ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']],
             ['Transformación', ['Escala de grises'],]]
@@ -115,7 +115,6 @@ while True:
     if event == 'Abrir':
         # sg.popup('About this program', 'Version 1.0', 'PySimpleGUI rocks...') #--> PARA LA INFORMACION DE LA IMAGEN      
         filename = sg.popup_get_file("Selecciona la imagen a cargar")
-        print(filename)
         proccessed_image = convert_to_bytes(filename, resize=new_size)
         window['-IMAGE-'].update(proccessed_image)
         window['-NOMBRE_IMAGEN-'].update(filename)
@@ -127,7 +126,6 @@ while True:
 
     if event == 'Guardar':
         new_filename = sg.popup_get_file("Guardar como", save_as= True)
-        print(new_filename)
         utility.save_as(new_filename)
     
     # Opciones de edición
@@ -140,8 +138,15 @@ while True:
         # information_text = utility.info_imagen(filename, pixels)
         window['-INFO_TEXT-'].update(information_text)
 
-    if event == 'Ajuste lineal del brillo y constraste':
-        
+    if event == 'Ajuste lineal del brillo y contraste':
+        pixels = function.get_pixel_values(working_copy_filename)
+        frequency = function.calculate_pixel_frequency(pixels)
+        img = PIL.Image.open(working_copy_filename, 'r')
+        brightness = function.brightness(img.size, frequency)
+        contrast = function.contrast(img.size, brightness, frequency)
+        new_brigthness = sg.popup_get_text('Introduce el brillo:')
+        new_contrast = sg.popup_get_text('Introduce el contrate:')
+        table.colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigthness, new_contrast)
     # Detección de click en imagen para crear ROI
     if event == '-IMAGE-':
         print(input.cursor_image_pos(x_pos , y_pos, img_height, img_width))
