@@ -56,7 +56,7 @@ menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
 
 # Por ahora solo mostrará el nombre del archivo que se eligió
 image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 10 bold')],
-              [sg.Image(key='-IMAGE-', visible = False)],
+              [sg.Image(key='-IMAGE-', visible = False, enable_events= True)],
               [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 10 bold')],
               [sg.Text(information_text ,background_color= "light green", key = '-MOUSE_POS-',  visible = False, relief= "raised", font='Arial 12 bold')]]
             
@@ -97,7 +97,14 @@ if debug == 1:
 
 # ---------------- Bucle de eventos ----------------
 while True:
-    event, values = window.read(timeout=25)
+    event, values = window.read(timeout=500)
+    # print(event, values)
+
+    x_pos = window['-IMAGE-'].Widget.winfo_rootx()
+    y_pos = window['-IMAGE-'].Widget.winfo_rooty()
+    img_height = window['-IMAGE-'].Widget.winfo_height()
+    img_width  = window['-IMAGE-'].Widget.winfo_width()
+
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
     if event == sg.WIN_CLOSED or event == 'Exit':
@@ -130,21 +137,15 @@ while True:
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + " GREYSCALE")
         # information_text = utility.info_imagen(filename, pixels)
         window['-INFO_TEXT-'].update(information_text)
-        print("HOLA")
 
+    # Detección de click en imagen para crear ROI
+    if event == '-IMAGE-':
+        print(input.cursor_image_pos(x_pos , y_pos, img_height, img_width))
+    
     # Instrucciones a ejecutarse cada 25 ms
-    x_pos = window['-IMAGE-'].Widget.winfo_rootx()
-    y_pos = window['-IMAGE-'].Widget.winfo_rooty()
-    img_height = window['-IMAGE-'].Widget.winfo_height()
-    img_width  = window['-IMAGE-'].Widget.winfo_width()
-
-    # print('x: %s, y: %s' % (x_pos, y_pos))
-    # print('h: %s, w: %s' % (img_height, img_width))
-    # print(window['-IMAGE-'].Widget.winfo_pointerxy())
-
     if (input.is_cursor_over_image(x_pos , y_pos, img_height, img_width)):
         window['-MOUSE_POS-'].update(visible = True)
-        window['-MOUSE_POS-'].update(input.cursor_pos(x_pos , y_pos, img_height, img_width))
+        window['-MOUSE_POS-'].update(input.cursor_image_pos(x_pos , y_pos, img_height, img_width))
     else:
         window['-MOUSE_POS-'].update(visible = False)
 
