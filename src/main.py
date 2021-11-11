@@ -14,6 +14,9 @@ import PIL.Image
 from pathlib import Path
 import io
 import base64
+
+import pyautogui
+from pyautogui import position
 import utility
 import function
 import table
@@ -150,7 +153,14 @@ while True:
     # Detección de click en imagen para crear ROI
     if event == '-IMAGE-':
         print(input.cursor_image_pos(x_pos , y_pos, img_height, img_width))
-    
+    if event == 'Región de interés':
+        position = input.cursor_image_pos(x_pos , y_pos, img_height, img_width)
+        print("hola")
+        print(position)
+        cursor_pos = position()
+        print("HOLA")
+        print(cursor_pos)
+
     # Instrucciones a ejecutarse cada 25 ms
     if (input.is_cursor_over_image(x_pos , y_pos, img_height, img_width)):
         window['-MOUSE_POS-'].update(visible = True)
