@@ -27,6 +27,10 @@ def make_linearfit_table(brightness, contrast, new_brightness, new_contrast):
     ]
     return linearfitLUT
 
+def make_equalization_table(frequency):
+    # FORMULA: vout = max(0, round[(ho(Vin)/size)*M]-1)
+    print(frequency)
+
 # Método encargado de realizar la transformación de la imagen
 # a una imagen en escala de grises
 def colour_to_grayscale(working_copy_filename):
@@ -55,7 +59,6 @@ def colour_to_linearlfit(working_copy_filename, pixels):
     for i in range(img.size[0]):
         for j in range(img.size[1]):
             for k in range(3):
-            #grey_value = round(0.222 * pixs[i,j][0] + 0.707 * pixs[i,j][1] + 0.071 * pixs[i,j][2])
                 linearfit_value += linearfitLUT[k][pixs[i,j][k]]
                 linearfit_value = round(linearfit_value)
             pixs[i,j] = (linearfit_value, linearfit_value, linearfit_value)
