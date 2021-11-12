@@ -17,7 +17,7 @@ def is_cursor_over_image(img_x_pos , img_y_pos, img_height, img_width):
             return 1
     return 0
 
-def cursor_image_pos(img_x_pos , img_y_pos, img_height, img_width):
+def cursor_image_pos(img_x_pos , img_y_pos):
     cursor_pos = pyautogui.position()
     x = cursor_pos[0] - img_x_pos
     y = cursor_pos[1] - img_y_pos

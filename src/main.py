@@ -10,7 +10,7 @@
 """
 import PySimpleGUI as sg
 import os.path
-import PIL.Image
+from PIL import Image, ImageDraw
 from pathlib import Path
 import io
 import base64
@@ -28,19 +28,19 @@ information_text = ''
 # el tamaño de una imagen si es un archivo o un objeto de base64 bytes
 def convert_to_bytes(file_or_bytes, resize=None):
     if isinstance(file_or_bytes, str):
-        img = PIL.Image.open(file_or_bytes)
+        img = Image.open(file_or_bytes)
     else:
         try:
-            img = PIL.Image.open(io.BytesIO(base64.b64decode(file_or_bytes)))
+            img = Image.open(io.BytesIO(base64.b64decode(file_or_bytes)))
         except Exception as e:
             dataBytesIO = io.BytesIO(file_or_bytes)
-            img = PIL.Image.open(dataBytesIO)
+            img = Image.open(dataBytesIO)
 
     cur_width, cur_height = img.size
     if resize:
         new_width, new_height = resize
         scale = min(new_height/cur_height, new_width/cur_width)
-        img = img.resize((int(cur_width*scale), int(cur_height*scale)), PIL.Image.ANTIALIAS)
+        img = img.resize((int(cur_width*scale), int(cur_height*scale)), Image.ANTIALIAS)
     with io.BytesIO() as bio:
         img.save(bio, format="PNG")
         del img
@@ -78,10 +78,10 @@ window.Maximize()
 
 
 if debug == 1:
-    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'  
+    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'  
     #filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
 
-    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
+    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
     window['-IMAGE-'].update(visible = True)
@@ -106,6 +106,7 @@ while True:
     y_pos = window['-IMAGE-'].Widget.winfo_rooty()
     img_height = window['-IMAGE-'].Widget.winfo_height()
     img_width  = window['-IMAGE-'].Widget.winfo_width()
+    roi_clicks = []
 
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
@@ -141,29 +142,35 @@ while True:
     if event == 'Ajuste lineal del brillo y contraste':
         pixels = function.get_pixel_values(working_copy_filename)
         frequency = function.calculate_pixel_frequency(pixels)
-        img = PIL.Image.open(working_copy_filename, 'r')
+        img = Image.open(working_copy_filename, 'r')
         brightness = function.brightness(img.size, frequency)
         contrast = function.contrast(img.size, brightness, frequency)
         new_brigthness = sg.popup_get_text('Introduce el brillo:')
         new_contrast = sg.popup_get_text('Introduce el contrate:')
         table.colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigthness, new_contrast)
+    
     # Detección de click en imagen para crear ROI
     if event == '-IMAGE-' :
-        position = input.cursor_image_pos(x_pos , y_pos, img_height, img_width)
-    
+        if (len(roi_clicks) < 2):
+            roi_clicks.append(input.cursor_image_pos(x_pos , y_pos))
+        else:
+            print(roi_clicks)
+            drawing_copy_filename = utility.create_drawing_copy(filename)
+            image_roi = convert_to_bytes(drawing_copy_filename, resize=new_size)
+            draw = ImageDraw.Draw(image_roi)
+            draw.rectangle(roi_clicks)
+            window['-IMAGE-'].update(image_roi)
+
+
     # Instrucciones a ejecutarse cada 25 ms
     if (input.is_cursor_over_image(x_pos , y_pos, img_height, img_width)):
         window['-MOUSE_POS-'].update(visible = True)
-        window['-MOUSE_POS-'].update(input.cursor_image_pos(x_pos , y_pos, img_height, img_width))
+        window['-MOUSE_POS-'].update(input.cursor_image_pos(x_pos , y_pos))
     else:
         window['-MOUSE_POS-'].update(visible = False)
         if event == 'Región de interés':
-            position = input.cursor_image_pos(x_pos , y_pos, img_height, img_width)
-            print("hola")
-            print("HOLA")
-            positionA = position
-            position = input.cursor_image_pos(x_pos , y_pos, img_height, img_width)
-            positionB = position
+            positionA = input.cursor_image_pos(x_pos , y_pos)
+            positionB = input.cursor_image_pos(x_pos , y_pos)
             print(positionA)
             print(positionB)
 
