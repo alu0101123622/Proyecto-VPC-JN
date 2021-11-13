@@ -3,7 +3,6 @@ import PIL.Image
 import function
 
 def make_grayscale_table():
-
     grayscaleLUT = [
         [r * 0.299 for r in range(256)],
         [g * 0.587 for g in range(256)],
@@ -31,6 +30,15 @@ def make_linearfit_table(brightness, contrast, new_brightness, new_contrast):
     ]
     return linearfitLUT
 
+def make_gamma_table(frequency, gamma_value):
+    gammaLUT = [
+        [(pow((r / 255), gamma_value) * 255)  for r in range(256)],
+        [(pow((g / 255), gamma_value) * 255) for g in range(256)],
+        [(pow((b / 255), gamma_value) * 255) for b in range(256)]
+    ]
+    return gammaLUT
+
+
 def make_equalization_table(frequency):
     # FORMULA: vout = max(0, round[(ho(Vin)/size)*M]-1)
     print(frequency)
@@ -56,7 +64,6 @@ def colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigth
     img  = PIL.Image.open(working_copy_filename)
     pixs = img.load()
     linearfitLUT = make_linearfit_table(brightness, contrast, new_brigthness, new_contrast)
-    linearfit_value = 0
     for i in range(img.size[0]):
         for j in range(img.size[1]):
             linearfit_valueR = linearfitLUT[0][pixs[i,j][0]]
@@ -66,6 +73,7 @@ def colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigth
             linearfit_valueG = round(linearfit_valueG)
             linearfit_valueB = round(linearfit_valueB)
             pixs[i,j] = (linearfit_valueR, linearfit_valueG, linearfit_valueB)
-            linearfit_value = 0
     img.save(working_copy_filename)
     del img
+
+def color

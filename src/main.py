@@ -23,6 +23,7 @@ new_size = int(600), int(600) # Ajusto un tamaño fijo para cualquier imagen de 
 filename = ""
 debug = 1
 information_text = ''
+roi_clicks = []
 
 # Método encargado de convertir en bytes y la imagen cambiará
 # el tamaño de una imagen si es un archivo o un objeto de base64 bytes
@@ -79,9 +80,9 @@ window.Maximize()
 
 if debug == 1:
     # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'  
-    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
+    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
 
-    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
+    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
     window['-IMAGE-'].update(visible = True)
@@ -106,7 +107,6 @@ while True:
     y_pos = window['-IMAGE-'].Widget.winfo_rooty()
     img_height = window['-IMAGE-'].Widget.winfo_height()
     img_width  = window['-IMAGE-'].Widget.winfo_width()
-    roi_clicks = []
 
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
@@ -155,28 +155,31 @@ while True:
     
     # Detección de click en imagen para crear ROI
     if event == '-IMAGE-' :
+
         if (len(roi_clicks) < 2):
-            roi_clicks.append(input.cursor_image_pos(x_pos , y_pos))
-        else:
+            roi_clicks.insert(input.cursor_image_pos(x_pos , y_pos))
             print(roi_clicks)
+            print(len(roi_clicks))
+        else:
+            print("2 clicks")
             drawing_copy_filename = utility.create_drawing_copy(filename)
             image_roi = convert_to_bytes(drawing_copy_filename, resize=new_size)
             draw = ImageDraw.Draw(image_roi)
             draw.rectangle(roi_clicks)
             window['-IMAGE-'].update(image_roi)
-
+        print(roi_clicks)
 
     # Instrucciones a ejecutarse cada 25 ms
     if (input.is_cursor_over_image(x_pos , y_pos, img_height, img_width)):
         window['-MOUSE_POS-'].update(visible = True)
         window['-MOUSE_POS-'].update(input.cursor_image_pos(x_pos , y_pos))
-    else:
-        window['-MOUSE_POS-'].update(visible = False)
-        if event == 'Región de interés':
-            positionA = input.cursor_image_pos(x_pos , y_pos)
-            positionB = input.cursor_image_pos(x_pos , y_pos)
-            print(positionA)
-            print(positionB)
+    # else:
+        # window['-MOUSE_POS-'].update(visible = False)
+        # if event == 'Región de interés':
+        #     positionA = input.cursor_image_pos(x_pos , y_pos)
+        #     positionB = input.cursor_image_pos(x_pos , y_pos)
+        #     print(positionA)
+        #     print(positionB)
 
 
     
