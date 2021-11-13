@@ -19,7 +19,9 @@ from numpy import Infinity, log2, sqrt
 ## Method for obtaining the values ​​of the images 
 ## of width and length
 def get_pixel_values(filename):
-    img = PIL.Image.open(filename, 'r')
+    # img = PIL.Image.open(filename, 'r')
+    img = PIL.Image.open(filename)
+
     pixel_values = list(img.getdata())
     del img
     return pixel_values
@@ -71,10 +73,14 @@ def  calculate_normalized_frequencies(frequencies, size):
     #     frequencies[pixel] = frequencies[pixel] * factor
     width, height = size
     size = width * height
-    for color in frequencies:
-        color_key = color.keys()
-        for pixel_value, frequency in color.items():
-            color.update(OrderedDict.fromkeys([pixel_value], frequency / size)) 
+    if (len(frequencies) == 3):
+        for color in frequencies:
+            #color_key = color.keys()
+            for pixel_value, frequency in color.items():
+                color.update(OrderedDict.fromkeys([pixel_value], frequency / size))
+    else:
+        for pixel_value, frequency in frequencies.items():
+                frequencies.update(OrderedDict.fromkeys([pixel_value], frequency / size))
     return frequencies    
 
 ##  Method for creating the histogram of absolute values
@@ -135,8 +141,8 @@ def brightness(size, pixel_frequency):
                 sum += (frequency * pixel_value) / 3
                 # sum += frequency * pixel_value
     else:
-        for pixel in pixel_frequency:
-            sum += pixel[0] + pixel[1] + pixel[2]
+        for pixel_value, frequency in pixel_frequency.items():
+            sum += (frequency * pixel_value) 
     bright = sum / (size)
     return bright
 
@@ -150,6 +156,9 @@ def contrast(size, brightness, pixel_frequency):
             for pixel_value, frequency in color.items():
                 # print('pv: %s * f: %s' % (str(pv), str(f)))
                 sum += (frequency * pow(pixel_value - brightness, 2)) / 3
+    else: 
+        for pixel_value, frequency in pixel_frequency.items():
+            sum += (frequency * pow(pixel_value - brightness, 2))
     contrast = sqrt(sum / size)
     return contrast
 
@@ -161,20 +170,33 @@ def entropy(size, pixel_frequency_normalized):
         for color in pixel_frequency_normalized:
             for pixel_value, frequency in color.items():
                 sum += (frequency * log2(frequency)) / 3
+    else:
+        for pixel_value, frequency in pixel_frequency_normalized.items():
+            sum += (frequency * log2(frequency))
     return -sum
 
 def max_value(pixel_frequency):
     max = -1
-    for color in pixel_frequency:
-        for pixel_value, frequency in color.items():
+    if (len(pixel_frequency) == 3):
+        for color in pixel_frequency:
+            for pixel_value, frequency in color.items():
+                if (pixel_value > max):
+                    max = pixel_value
+    else:
+        for pixel_value, frequency in pixel_frequency.items():
             if (pixel_value > max):
-                max = pixel_value
+                    max = pixel_value
     return max
 
 def min_value(pixel_frequency):
     min = Infinity
-    for color in pixel_frequency:
-        for pixel_value, frequency in color.items():
+    if (len(pixel_frequency) == 3):
+        for color in pixel_frequency:
+            for pixel_value, frequency in color.items():
+                if (pixel_value < min):
+                    min = pixel_value
+    else:
+        for pixel_value, frequency in pixel_frequency.items():
             if (pixel_value < min):
-                min = pixel_value
+                    min = pixel_value
     return min

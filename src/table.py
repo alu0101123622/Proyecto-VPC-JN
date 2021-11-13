@@ -30,7 +30,8 @@ def make_linearfit_table(brightness, contrast, new_brightness, new_contrast):
     ]
     return linearfitLUT
 
-def make_gamma_table(frequency, gamma_value):
+def make_gamma_table(gamma_value):
+    gamma_value = round(float(gamma_value), 3)
     gammaLUT = [
         [(pow((r / 255), gamma_value) * 255)  for r in range(256)],
         [(pow((g / 255), gamma_value) * 255) for g in range(256)],
@@ -38,10 +39,19 @@ def make_gamma_table(frequency, gamma_value):
     ]
     return gammaLUT
 
+def make_gamma_table_RGB(gamma_valueR, gamma_valueG, gamma_valueB):
+    gamma_valueR = round(float(gamma_valueR), 3)
+    gamma_valueG = round(float(gamma_valueG), 3)
+    gamma_valueB = round(float(gamma_valueB), 3)
+    gammaLUT = [
+        [(pow((r / 255), gamma_valueR) * 255)  for r in range(256)],
+        [(pow((g / 255), gamma_valueG) * 255) for g in range(256)],
+        [(pow((b / 255), gamma_valueB) * 255) for b in range(256)]
+    ]
+    return gammaLUT
 
-def make_equalization_table(frequency):
-    # FORMULA: vout = max(0, round[(ho(Vin)/size)*M]-1)
-    print(frequency)
+
+
 
 # Método encargado de realizar la transformación de la imagen
 # a una imagen en escala de grises
@@ -64,16 +74,51 @@ def colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigth
     img  = PIL.Image.open(working_copy_filename)
     pixs = img.load()
     linearfitLUT = make_linearfit_table(brightness, contrast, new_brigthness, new_contrast)
-    for i in range(img.size[0]):
-        for j in range(img.size[1]):
-            linearfit_valueR = linearfitLUT[0][pixs[i,j][0]]
-            linearfit_valueG = linearfitLUT[1][pixs[i,j][1]]
-            linearfit_valueB = linearfitLUT[2][pixs[i,j][2]]
-            linearfit_valueR = round(linearfit_valueR)
-            linearfit_valueG = round(linearfit_valueG)
-            linearfit_valueB = round(linearfit_valueB)
-            pixs[i,j] = (linearfit_valueR, linearfit_valueG, linearfit_valueB)
+    print(pixs[0,0])
+    if type(pixs[0,0]) == tuple: 
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                linearfit_valueR = linearfitLUT[0][pixs[i,j][0]]
+                linearfit_valueG = linearfitLUT[1][pixs[i,j][1]]
+                linearfit_valueB = linearfitLUT[2][pixs[i,j][2]]
+                linearfit_valueR = round(linearfit_valueR)
+                linearfit_valueG = round(linearfit_valueG)
+                linearfit_valueB = round(linearfit_valueB)
+                pixs[i,j] = (linearfit_valueR, linearfit_valueG, linearfit_valueB)
+    else:
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                linearfit_valueR = linearfitLUT[0][pixs[i,j]]
+                linearfit_valueB = linearfitLUT[2][pixs[i,j]]
+                linearfit_valueR = round(linearfit_valueR)
+                linearfit_valueB = round(linearfit_valueB)
+                pixs[i,j] = linearfit_valueR
+
+
     img.save(working_copy_filename)
     del img
 
-def color
+
+def colour_to_gamma_RGB(working_copy_filename, gamma_valueR, gamma_valueG, gamma_valueB):
+    gammaLUT = make_gamma_table_RGB(gamma_valueR, gamma_valueG, gamma_valueB)
+    img = PIL.Image.open(working_copy_filename)
+    pixs = img.load()
+    for i in range(img.size[0]):
+        for j in range(img.size[1]):
+            gamma_valueR = round(gammaLUT[0][pixs[i,j][0]])
+            gamma_valueG = round(gammaLUT[1][pixs[i,j][1]])
+            gamma_valueB = round(gammaLUT[2][pixs[i,j][2]])
+            pixs[i,j] = (gamma_valueR, gamma_valueG, gamma_valueB)
+    img.save(working_copy_filename)
+    del img
+
+def colour_to_gamma(working_copy_filename, gamma_value):
+    gammaLUT = make_gamma_table(gamma_value)
+    img = PIL.Image.open(working_copy_filename)
+    pixs = img.load()
+    for i in range(img.size[0]):
+        for j in range(img.size[1]):
+            gamma_value = round(gammaLUT[0][pixs[i,j][0]])
+            pixs[i,j] = (gamma_value, gamma_value, gamma_value)
+    img.save(working_copy_filename)
+    del img

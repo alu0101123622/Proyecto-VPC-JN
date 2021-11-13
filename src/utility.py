@@ -16,13 +16,22 @@ import function
 working_copy_filename = ""
 drawing_copy_filename = ""
 
+def is_rgb(filename):
+    img = PIL.Image.open(filename)
+    pix = img.load()
+    if type(pix[0,0]) == tuple: 
+        return 1
+    return 0
+
 # Método encargado de realizar una copia de trabajo
 # para la visualización de las distintas transformaciones
 def create_working_copy(filename):
     img = PIL.Image.open(filename)
+    rgbimg = PIL.Image.new('RGB', img.size)
+    rgbimg.paste(img)
     working_copy_filename = os.path.splitext(filename)[0] + "_WC.tiff"
     print(working_copy_filename)
-    img.save(working_copy_filename)
+    rgbimg.save(working_copy_filename)
     del img
     return working_copy_filename
 
@@ -30,11 +39,19 @@ def create_working_copy(filename):
 # para la visualización del roi
 def create_drawing_copy(filename):
     img = PIL.Image.open(filename)
+    rgbimg = PIL.Image.new('RGB', img.size)
+    rgbimg.paste(img)
     drawing_copy_filename = os.path.splitext(filename)[0] + "_DC.tiff"
     print(drawing_copy_filename)
-    img.save(drawing_copy_filename)
+    rgbimg.save(drawing_copy_filename)
     del img
     return drawing_copy_filename
+
+# Método encargado de abrir la copia de dibujo
+# para la visualización del roi
+def open_drawing_copy(filename):
+    img = PIL.Image.open(filename)
+    return img
 
 # Método encargado de guardar los cambios realizados en
 # una copia de la original
@@ -45,7 +62,7 @@ def save_as(saves_as_filename):
 
 # Método encargado de mostrar la información de la imagen
 def info_imagen(filename, pixels):
-    img = PIL.Image.open(filename, 'r')
+    img = PIL.Image.open(filename)
     width, height = img.size
     brightness = function.brightness(img.size, pixels)
     contrast = function.contrast(img.size, brightness, pixels)
@@ -55,5 +72,15 @@ def info_imagen(filename, pixels):
     return ('Height: %s | Width: %s | Brightness: %s | Contrast: %s |  Min: %s | Max: %s | Entropy: %s' % 
     (str(height), str(width), str(round(brightness, 3)), str(round(contrast, 3)), str(min), str(max), str(round(entropy, 3))))
 
+def image_size(filename):
+    img = PIL.Image.open(filename)
+    width, height = img.size   
+    return (width, height) 
 
-
+def create_image_roi(roi_points, filename):
+    img = PIL.Image.open(filename)
+    base_image = PIL.Image.new('RGB', img.size)
+    base_image.paste(img)
+    # region_image = PIL.Image.new()
+    region = base_image.crop((roi_points[0][0], roi_points[0][1], roi_points[1][0], roi_points[1][1]))
+    return region

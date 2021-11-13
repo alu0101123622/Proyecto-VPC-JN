@@ -22,3 +22,9 @@ def cursor_image_pos(img_x_pos , img_y_pos):
     x = cursor_pos[0] - img_x_pos
     y = cursor_pos[1] - img_y_pos
     return ([x, y])
+
+def cursor_image_pos_for_rectangle(img_x_pos , img_y_pos):
+    cursor_pos = pyautogui.position()
+    x = cursor_pos[0] - img_x_pos
+    y = cursor_pos[1] - img_y_pos
+    return (x, y)
