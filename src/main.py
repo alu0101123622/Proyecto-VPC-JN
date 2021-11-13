@@ -135,7 +135,7 @@ while True:
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)
         window['-IMAGEWC-'].update(visible = True)
-        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + " GREYSCALE")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
         # information_text = utility.info_imagen(filename, pixels)
         window['-INFO_TEXT-'].update(information_text)
 
@@ -148,6 +148,10 @@ while True:
         new_brigthness = sg.popup_get_text('Introduce el brillo:')
         new_contrast = sg.popup_get_text('Introduce el contrate:')
         table.colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigthness, new_contrast)
+        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_linearlfit")
     
     # Detección de click en imagen para crear ROI
     if event == '-IMAGE-' :
