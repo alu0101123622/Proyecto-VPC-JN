@@ -59,10 +59,13 @@ def colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigth
     linearfit_value = 0
     for i in range(img.size[0]):
         for j in range(img.size[1]):
-            for k in range(3):
-                linearfit_value += linearfitLUT[k][pixs[i,j][k]]
-                linearfit_value = round(linearfit_value)
-            pixs[i,j] = (linearfit_value, linearfit_value, linearfit_value)
+            linearfit_valueR = linearfitLUT[0][pixs[i,j][0]]
+            linearfit_valueG = linearfitLUT[1][pixs[i,j][1]]
+            linearfit_valueB = linearfitLUT[2][pixs[i,j][2]]
+            linearfit_valueR = round(linearfit_valueR)
+            linearfit_valueG = round(linearfit_valueG)
+            linearfit_valueB = round(linearfit_valueB)
+            pixs[i,j] = (linearfit_valueR, linearfit_valueG, linearfit_valueB)
             linearfit_value = 0
     img.save(working_copy_filename)
     del img
