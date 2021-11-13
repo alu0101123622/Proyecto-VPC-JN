@@ -11,6 +11,7 @@
 """
 import os.path
 import PIL.Image
+from pyautogui import size
 import function
 
 working_copy_filename = ""
@@ -84,3 +85,7 @@ def create_image_roi(roi_points, filename):
     # region_image = PIL.Image.new()
     region = base_image.crop((roi_points[0][0], roi_points[0][1], roi_points[1][0], roi_points[1][1]))
     return region
+
+def calculate_slope(pointA, pointB):
+    slope = (pointB[1] - pointA[1]) / (pointB[0] - pointA[0])
+    return slope

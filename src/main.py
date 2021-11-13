@@ -82,9 +82,9 @@ window.Maximize()
 
 if debug == 1:
     # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.04.tiff'  
-    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
+    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
     # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/7.2.01.tiff'
-
+    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/larva.tif'
     # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
@@ -135,6 +135,17 @@ while True:
         new_filename = sg.popup_get_file("Guardar como", save_as= True)
         utility.save_as(new_filename)
     
+    if event == 'Transformaciones lineales por tramos':
+        number_sections = int(sg.popup_get_text('Número de tramos: '))
+        # 'pv: %s * f: %s' % (str(pv), str(f)))
+        array_points = []
+        for i in range(number_sections + 1):
+            pointA = int(sg.popup_get_text('Introduce la coordenada x del punto %s:' % str(i)))
+            pointB = int(sg.popup_get_text('Introduce la coordenada y del punto %s:' % str(i)))
+            point = (pointA, pointB)
+            array_points.append(point)
+        print(array_points)
+
     # Opciones de edición
     if event == 'Escala de grises':
         table.colour_to_grayscale(working_copy_filename)
