@@ -137,14 +137,14 @@ while True:
     
     if event == 'Transformaciones lineales por tramos':
         number_sections = int(sg.popup_get_text('Número de tramos: '))
-        # 'pv: %s * f: %s' % (str(pv), str(f)))
         array_points = []
         for i in range(number_sections + 1):
             pointA = int(sg.popup_get_text('Introduce la coordenada x del punto %s:' % str(i)))
             pointB = int(sg.popup_get_text('Introduce la coordenada y del punto %s:' % str(i)))
             point = (pointA, pointB)
             array_points.append(point)
-        print(array_points)
+        array_slopes = utility.calculate_array_slope(array_points)
+        table.colour_by_sections(working_copy_filename, array_points, array_slopes)
 
     # Opciones de edición
     if event == 'Escala de grises':

@@ -1,6 +1,7 @@
 from tkinter import constants
 import PIL.Image
 import function
+import numpy as np
 
 def make_grayscale_table():
     grayscaleLUT = [
@@ -50,7 +51,22 @@ def make_gamma_table_RGB(gamma_valueR, gamma_valueG, gamma_valueB):
     ]
     return gammaLUT
 
-
+def make_sections_table(array_points, array_slopes):
+    array_points.pop(0)
+    sectionsLUT = []
+    color_array = []
+    color_array_aux = []
+    for point, (i, j) in enumerate(array_points):
+        if (point == 0):
+            color = [(array_slopes[point] * (c - i) + j) for c in range(i + 1)]
+        else:
+            color = [(array_slopes[point] * (c - i) + j) for c in range((i - array_points[point - 1][0]))]
+        color_array.append(color)
+    for color in color_array:
+        color_array_aux += color
+    for color in range(3):
+        sectionsLUT.append(color_array_aux[color])
+    return sectionsLUT
 
 
 # Método encargado de realizar la transformación de la imagen
@@ -122,3 +138,8 @@ def colour_to_gamma(working_copy_filename, gamma_value):
             pixs[i,j] = (gamma_value, gamma_value, gamma_value)
     img.save(working_copy_filename)
     del img
+
+def colour_by_sections(working_copy_filename, array_points, array_slopes):
+    sectionsLUT = make_sections_table(array_points, array_slopes)
+    img = PIL.Image.open(working_copy_filename)
+    pixs = img.load()

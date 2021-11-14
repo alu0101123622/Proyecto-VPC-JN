@@ -87,5 +87,13 @@ def create_image_roi(roi_points, filename):
     return region
 
 def calculate_slope(pointA, pointB):
-    slope = (pointB[1] - pointA[1]) / (pointB[0] - pointA[0])
+    slope = round((pointB[1] - pointA[1]) / (pointB[0] - pointA[0]), 2)
     return slope
+
+def calculate_array_slope(array_points):
+    array_slopes = []
+    for point, (i, j) in enumerate(array_points):
+        if ((point + 1) < len(array_points)):
+            slope = calculate_slope(array_points[point], array_points[point + 1])
+            array_slopes.append(slope)
+    return array_slopes
