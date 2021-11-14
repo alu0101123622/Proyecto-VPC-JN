@@ -144,7 +144,22 @@ while True:
             point = (pointA, pointB)
             array_points.append(point)
         array_slopes = utility.calculate_array_slope(array_points)
-        table.colour_by_sections(working_copy_filename, array_points, array_slopes)
+        if (rgb):
+            table.colour_by_sections_RGB(working_copy_filename, array_points, array_slopes)
+            proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+            window['-IMAGEWC-'].update(proccessed_image)
+            window['-IMAGEWC-'].update(visible = True)
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_SECTIONS_RGB")
+            # information_text = utility.info_imagen(filename, pixels)
+            window['-INFO_TEXT-'].update(information_text)
+        else:
+            table.colour_by_sections(working_copy_filename, array_points, array_slopes)
+            proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+            window['-IMAGEWC-'].update(proccessed_image)
+            window['-IMAGEWC-'].update(visible = True)
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_SECTIONS_B&W")
+            # information_text = utility.info_imagen(filename, pixels)
+            window['-INFO_TEXT-'].update(information_text)
 
     # Opciones de edición
     if event == 'Escala de grises':
@@ -199,7 +214,7 @@ while True:
             proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
             window['-IMAGEWC-'].update(proccessed_image)
             window['-IMAGEWC-'].update(visible = True)
-            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GAMMA_RGB")
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GAMMA_B&W")
             # information_text = utility.info_imagen(filename, pixels)
             window['-INFO_TEXT-'].update(information_text)
 
