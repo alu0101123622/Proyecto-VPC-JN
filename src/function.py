@@ -13,6 +13,7 @@ from typing import OrderedDict, Tuple
 import matplotlib.pyplot as plt
 import PIL.Image
 import collections
+import os.path
 
 from numpy import Infinity, log2, sqrt
 
@@ -84,8 +85,8 @@ def  calculate_normalized_frequencies(frequencies, size):
     return frequencies    
 
 ##  Method for creating the histogram of absolute values
-def draw_absolute_histogram(pixel_frequency):
-    if (len(pixel_frequency) == 3):
+def draw_absolute_histogram(pixel_frequency, rgb):
+    if (rgb):
         # RED
         keys = pixel_frequency[0].keys()
         values = pixel_frequency[0].values()
@@ -111,15 +112,23 @@ def draw_absolute_histogram(pixel_frequency):
         plt.title("Histograma de valores absolutos")
         plt.show()              
     else:
-        for pixel in pixel_frequency:
-            keys = pixel_frequency.keys()
-            values = pixel_frequency.values()
-            plt.bar(keys, values, color='black')
+        if(len(pixel_frequency) == 3):
+            keys = pixel_frequency[0].keys()
+            values = pixel_frequency[0].values()
+            plt.bar(keys, values, color='black', width=1.0)
             plt.xlabel("Valor de intensidad de color")
             plt.ylabel("Frecuencia")
             plt.title("Histograma de valores absolutos")
             plt.show()
-
+        else:
+            keys = pixel_frequency.keys()
+            values = pixel_frequency.values()
+            plt.bar(keys, values, color='black', width=1.0)
+            plt.xlabel("Valor de intensidad de color")
+            plt.ylabel("Frecuencia")
+            plt.title("Histograma de valores absolutos")
+            plt.show()
+            
 ## Method for creating the histogram of cumulative values
 def draw_cumulative_histogram(array):
     plt.hist(array, 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
@@ -200,3 +209,35 @@ def min_value(pixel_frequency):
             if (pixel_value < min):
                     min = pixel_value
     return min
+
+def image_difference(filename, second_filename):
+    first_image = PIL.Image.open(filename)
+    second_image = PIL.Image.open(second_filename)
+    if(first_image.size != second_image.size):
+        return "Cant compare two images with different sizes"
+    result_image = PIL.Image.new(mode='RGB',size=first_image.size)
+    first_pixels  = first_image.load()
+    second_pixels = second_image.load()
+    result_pixels = result_image.load()
+    for i in range(first_image.size[0]):
+        for j in range(first_image.size[1]):
+            # result_pixels[i,j] = abs(first_pixels[i,j] - second_pixels[i,j])
+            result_pixels[i,j] = tuple(map(lambda i, j: abs(i - j), first_pixels[i,j], second_pixels[i,j]))
+    difference_filename = os.path.splitext(filename)[0] + "_diff.tiff"
+    # result_image.show()
+    result_image.save(difference_filename)
+    return difference_filename       
+
+
+def draw_image_difference(difference_filename, t):
+    difference_filename = PIL.Image.open(difference_filename)
+    result_pixels = difference_filename.load()
+    for i in range(difference_filename.size[0]):
+        for j in range(difference_filename.size[1]):
+            if(result_pixels[i,j][0] >= t):
+                result_pixels[i,j] = (255,0,0)
+    difference_filename.show()
+    # difference_filename.save(difference_filename)
+
+
+    

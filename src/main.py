@@ -53,7 +53,7 @@ def convert_to_bytes(file_or_bytes, resize=None):
 # ---------------- Definición de Layout ----------------
 sg.theme('Light Blue 2')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
-            ['Información', ['Imprimir datos'],],
+            ['Información', ['Imprimir datos', 'Histograma absoluto', ['Original', 'Working Copy']],],
             ['Herramientas', ['Región de interés']],
             ['Operaciones Lineales', ['Transformaciones lineales por tramos', 'Ajuste lineal del brillo y contraste']],
             ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']],
@@ -81,11 +81,13 @@ window.Maximize()
 
 
 if debug == 1:
-    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.04.tiff'  
+    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.07.tiff'
+    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/tanque-anterior.tif'  
+
     # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
     # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/7.2.01.tiff'
     # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/larva.tif'
-    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
+    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
     window['-IMAGE-'].update(visible = True)
@@ -98,7 +100,7 @@ if debug == 1:
 
     pixels = function.get_pixel_values(filename)
     pixel_frequency = function.calculate_pixel_frequency(pixels)
-    # function.draw_absolute_histogram(pixel_frequency)
+    # function.draw_absolute_histogram(pixel_frequency, rgb)
     # normalizated_frequency = function.calculate_normalized_frequencies(pixel_frequency, len(pixels))
     information_text = utility.info_imagen(filename, pixel_frequency)
     window['-INFO_TEXT-'].update(information_text)
@@ -218,6 +220,29 @@ while True:
             # information_text = utility.info_imagen(filename, pixels)
             window['-INFO_TEXT-'].update(information_text)
 
+    if event == 'Original':
+        pixels = function.get_pixel_values(filename)
+        pixel_frequency = function.calculate_pixel_frequency(pixels)
+        function.draw_absolute_histogram(pixel_frequency, rgb)
+
+    if event == 'Working Copy':
+        pixels = function.get_pixel_values(working_copy_filename)
+        pixel_frequency = function.calculate_pixel_frequency(pixels)
+        function.draw_absolute_histogram(pixel_frequency, rgb)
+
+    if event == 'Diferencia entre dos imagenes':
+        second_filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.08.tiff'
+        # second_filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/tanque-posterior.tif'  
+        working_copy_second_filename = utility.create_working_copy(second_filename)
+        second_proccessed_image = convert_to_bytes(working_copy_second_filename, resize=new_size)
+        window['-IMAGEWC-'].update(second_proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
+        # second_filename = sg.popup_get_file("Selecciona la segunda imagen a comparar")
+        difference_filename = function.image_difference(working_copy_filename, working_copy_second_filename)
+        pixels = function.get_pixel_values(difference_filename)
+        pixel_frequency = function.calculate_pixel_frequency(pixels)
+        function.draw_absolute_histogram(pixel_frequency, rgb)
+        function.draw_image_difference(difference_filename, 30)
     # Detección de click en imagen para crear ROI
     if event == '-IMAGE-' :
         if (len(roi_clicks) < 2):

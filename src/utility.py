@@ -24,6 +24,7 @@ def is_rgb(filename):
         return 1
     return 0
 
+
 # Método encargado de realizar una copia de trabajo
 # para la visualización de las distintas transformaciones
 def create_working_copy(filename):

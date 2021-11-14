@@ -53,7 +53,7 @@ def make_gamma_table_RGB(gamma_valueR, gamma_valueG, gamma_valueB):
 
 def make_sections_table(array_points, array_slopes):
     array_points.pop(0)
-    sectionsLUT = []
+    # sectionsLUT = []
     color_array = []
     color_array_aux = []
     for point, (i, j) in enumerate(array_points):
@@ -65,8 +65,8 @@ def make_sections_table(array_points, array_slopes):
     for color in color_array:
         color_array_aux += color
     
-    for color in range(3):
-        sectionsLUT.append(color_array_aux[color])
+    # for color in range(3):
+    #     sectionsLUT.append(color_array_aux[color])
     return color_array_aux
 
 
