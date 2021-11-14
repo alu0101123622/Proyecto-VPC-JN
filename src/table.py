@@ -64,9 +64,10 @@ def make_sections_table(array_points, array_slopes):
         color_array.append(color)
     for color in color_array:
         color_array_aux += color
+    
     for color in range(3):
         sectionsLUT.append(color_array_aux[color])
-    return sectionsLUT
+    return color_array_aux
 
 
 # Método encargado de realizar la transformación de la imagen
@@ -145,9 +146,9 @@ def colour_by_sections_RGB(working_copy_filename, array_points, array_slopes):
     pixs = img.load()
     for i in range(img.size[0]):
         for j in range(img.size[1]):
-            gamma_valueR = round(sectionsLUT[0][pixs[i,j][0]])
-            gamma_valueG = round(sectionsLUT[1][pixs[i,j][1]])
-            gamma_valueB = round(sectionsLUT[2][pixs[i,j][2]])
+            gamma_valueR = round(sectionsLUT[pixs[i,j][0]])
+            gamma_valueG = round(sectionsLUT[pixs[i,j][1]])
+            gamma_valueB = round(sectionsLUT[pixs[i,j][2]])
             pixs[i,j] = (gamma_valueR, gamma_valueG, gamma_valueB)
     img.save(working_copy_filename)
     del img
@@ -158,7 +159,7 @@ def colour_by_sections(working_copy_filename, array_points, array_slopes):
     pixs = img.load()
     for i in range(img.size[0]):
         for j in range(img.size[1]):
-            gamma_value = round(sectionsLUT[0][pixs[i,j][0]])
+            gamma_value = round(sectionsLUT[pixs[i,j][0]])
             pixs[i,j] = (gamma_value, gamma_value, gamma_value)
     img.save(working_copy_filename)
     del img
