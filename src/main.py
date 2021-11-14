@@ -51,7 +51,7 @@ def convert_to_bytes(file_or_bytes, resize=None):
 
 
 # ---------------- Definición de Layout ----------------
-sg.theme('Light Blue 2')
+sg.theme('GreenMono')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Información', ['Imprimir datos', 'Histograma absoluto', ['Original', 'Working Copy']],],
             ['Herramientas', ['Región de interés']],
