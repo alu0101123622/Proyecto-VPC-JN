@@ -69,6 +69,15 @@ def make_sections_table(array_points, array_slopes):
     #     sectionsLUT.append(color_array_aux[color])
     return color_array_aux
 
+def make_equalization_table(pixels_frequencies_abs, size):
+    k_value = size / 256
+    pixels_frequencies_abs[0][0] = 0
+    equalizationLUT = [
+        [(max(0, round(pixels_frequencies_abs[0][r] / k_value) - 1)) for r in range(256)],
+        [(max(0, round(pixels_frequencies_abs[0][g] / k_value) - 1)) for g in range(256)],
+        [(max(0, round(pixels_frequencies_abs[0][b] / k_value) - 1)) for b in range(256)]
+    ]
+    return equalizationLUT
 
 # Método encargado de realizar la transformación de la imagen
 # a una imagen en escala de grises
@@ -91,7 +100,6 @@ def colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigth
     img  = PIL.Image.open(working_copy_filename)
     pixs = img.load()
     linearfitLUT = make_linearfit_table(brightness, contrast, new_brigthness, new_contrast)
-    print(pixs[0,0])
     if type(pixs[0,0]) == tuple: 
         for i in range(img.size[0]):
             for j in range(img.size[1]):
@@ -110,8 +118,6 @@ def colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigth
                 linearfit_valueR = round(linearfit_valueR)
                 linearfit_valueB = round(linearfit_valueB)
                 pixs[i,j] = linearfit_valueR
-
-
     img.save(working_copy_filename)
     del img
 
@@ -163,3 +169,26 @@ def colour_by_sections(working_copy_filename, array_points, array_slopes):
             pixs[i,j] = (gamma_value, gamma_value, gamma_value)
     img.save(working_copy_filename)
     del img
+
+def colour_equalization(working_copy_filename, pixels_frequencies_abs, rgb):
+    img = PIL.Image.open(working_copy_filename)
+    pixs = img.load()
+    width, height = img.size
+    size = width * height
+    equalizationLUT = make_equalization_table(pixels_frequencies_abs, size)
+    if (rgb):
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                equalization_valueR = round(equalizationLUT[0][pixs[i,j][0]])
+                equalization_valueG = round(equalizationLUT[1][pixs[i,j][1]])
+                equalization_valueB = round(equalizationLUT[2][pixs[i,j][2]])
+                pixs[i,j] = (equalization_valueR, equalization_valueG, equalization_valueB)
+        img.save(working_copy_filename)
+        del img
+    else:
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                equalization_value = round(equalizationLUT[0][pixs[i,j][0]])
+                pixs[i,j] = (equalization_value, equalization_value, equalization_value)
+        img.save(working_copy_filename)
+        del img

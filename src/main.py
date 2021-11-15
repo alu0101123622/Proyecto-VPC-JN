@@ -81,12 +81,12 @@ window.Maximize()
 
 
 if debug == 1:
-    filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.07.tiff'
+    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.07.tiff'
     # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/tanque-anterior.tif'  
 
     # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
     # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/7.2.01.tiff'
-    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/larva.tif'
+    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/larva.tif'
     # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
@@ -230,6 +230,13 @@ while True:
         pixel_frequency = function.calculate_pixel_frequency(pixels)
         function.draw_absolute_histogram(pixel_frequency, rgb)
 
+    if event == 'Ecualización del histograma':
+        pixels_wc = function.get_pixel_values(working_copy_filename)
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        # function.draw_absolute_histogram(pixel_frequency, rgb)
+        pixels_frequencies_abs = function.calculate_pixel_frequency_acumulative(pixel_frequency_wc)
+        table.colour_equalization(working_copy_filename, pixels_frequencies_abs, rgb)
+
     if event == 'Diferencia entre dos imagenes':
         second_filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.08.tiff'
         # second_filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/tanque-posterior.tif'  
@@ -243,12 +250,11 @@ while True:
         pixel_frequency = function.calculate_pixel_frequency(pixels)
         function.draw_absolute_histogram(pixel_frequency, rgb)
         function.draw_image_difference(difference_filename, 30)
+
     # Detección de click en imagen para crear ROI
     if event == '-IMAGE-' :
         if (len(roi_clicks) < 2):
             roi_clicks.append(input.cursor_image_pos_for_rectangle(x_pos , y_pos))
-            print(roi_clicks)
-            print(len(roi_clicks))
         if (roi):
             roi_clicks.clear()
             drawing_copy_filename = utility.create_drawing_copy(filename)
@@ -289,7 +295,9 @@ while True:
     else:
         window['-MOUSE_POS-'].update(visible = False)
         
-
+    if event == '-IMAGEWC-':
+        if (len(roi_clicks) < 2):
+            roi_clicks.append(input.cursor_image_pos_for_rectangle(x_pos , y_pos))
 
 
     

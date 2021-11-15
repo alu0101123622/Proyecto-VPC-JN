@@ -84,6 +84,25 @@ def  calculate_normalized_frequencies(frequencies, size):
                 frequencies.update(OrderedDict.fromkeys([pixel_value], frequency / size))
     return frequencies    
 
+def calculate_pixel_frequency_acumulative(pixel_frequency):
+    pixel_frequency_acumulativeA = dict(pixel_frequency[0])
+    pixel_frequency_acumulativeB = dict(pixel_frequency[1])
+    pixel_frequency_acumulativeC = dict(pixel_frequency[2])
+    pixel_frequency_acumulative = [pixel_frequency_acumulativeA, pixel_frequency_acumulativeB, pixel_frequency_acumulativeC]
+    sum = 0
+    for pixel_value, frequency in pixel_frequency_acumulative[0].items():
+        sum += frequency
+        pixel_frequency_acumulative[0].update(OrderedDict.fromkeys([pixel_value], sum))
+    sum = 0
+    for pixel_value, frequency in pixel_frequency_acumulative[1].items():
+        sum += frequency
+        pixel_frequency_acumulative[1].update(OrderedDict.fromkeys([pixel_value], sum))
+    sum = 0
+    for pixel_value, frequency in pixel_frequency_acumulative[2].items():
+        sum += frequency
+        pixel_frequency_acumulative[2].update(OrderedDict.fromkeys([pixel_value], sum))
+    return pixel_frequency_acumulative
+    
 ##  Method for creating the histogram of absolute values
 def draw_absolute_histogram(pixel_frequency, rgb):
     if (rgb):
