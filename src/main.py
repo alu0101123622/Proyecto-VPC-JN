@@ -53,7 +53,7 @@ def convert_to_bytes(file_or_bytes, resize=None):
 # ---------------- Definición de Layout ----------------
 sg.theme('GreenMono')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
-            ['Información', ['Imprimir datos', 'Histograma absoluto', ['Original', 'Working Copy']],],
+            ['Información', ['Imprimir datos', 'Histogramas', ['Histograma absoluto Original', 'Histograma absoluto Working Copy', 'Histograma absoluto acumulado Original', 'Histograma absoluto acumulado Working Copy']],],
             ['Herramientas', ['Región de interés']],
             ['Operaciones Lineales', ['Transformaciones lineales por tramos', 'Ajuste lineal del brillo y contraste']],
             ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']],
@@ -220,15 +220,25 @@ while True:
             # information_text = utility.info_imagen(filename, pixels)
             window['-INFO_TEXT-'].update(information_text)
 
-    if event == 'Original':
+    if event == 'Histograma absoluto Original':
         pixels = function.get_pixel_values(filename)
         pixel_frequency = function.calculate_pixel_frequency(pixels)
         function.draw_absolute_histogram(pixel_frequency, rgb)
 
-    if event == 'Working Copy':
+    if event == 'Histograma absoluto Working Copy':
         pixels = function.get_pixel_values(working_copy_filename)
         pixel_frequency = function.calculate_pixel_frequency(pixels)
         function.draw_absolute_histogram(pixel_frequency, rgb)
+    
+    if event == 'Histograma absoluto acumulado Original':
+        pixels = function.get_pixel_values(filename)
+        pixel_frequency = function.calculate_pixel_frequency(pixels)
+        function.draw_acumulative_histogram(pixel_frequency, rgb)
+
+    if event == 'Histograma absoluto acumulado Working Copy':
+        pixels = function.get_pixel_values(working_copy_filename)
+        pixel_frequency = function.calculate_pixel_frequency(pixels)
+        function.draw_acumulative_histogram(pixel_frequency, rgb)
 
     if event == 'Ecualización del histograma':
         pixels_wc = function.get_pixel_values(working_copy_filename)

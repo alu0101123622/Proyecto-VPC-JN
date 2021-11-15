@@ -102,7 +102,7 @@ def calculate_pixel_frequency_acumulative(pixel_frequency):
         sum += frequency
         pixel_frequency_acumulative[2].update(OrderedDict.fromkeys([pixel_value], sum))
     return pixel_frequency_acumulative
-    
+
 ##  Method for creating the histogram of absolute values
 def draw_absolute_histogram(pixel_frequency, rgb):
     if (rgb):
@@ -149,7 +149,7 @@ def draw_absolute_histogram(pixel_frequency, rgb):
             plt.show()
             
 ## Method for creating the histogram of cumulative values
-def draw_cumulative_histogram(array):
+def draw_acumulative_histogram(array):
     plt.hist(array, 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
     plt.xlabel("Valor de intensidad de color")
     plt.ylabel("Frecuencia")
