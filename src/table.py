@@ -71,13 +71,20 @@ def make_sections_table(array_points, array_slopes):
 
 def make_equalization_table(pixels_frequencies_abs, size):
     k_value = size / 256
-    pixels_frequencies_abs[0][0] = 0
     equalizationLUT = [
         [(max(0, round(pixels_frequencies_abs[0][r] / k_value) - 1)) for r in range(256)],
-        [(max(0, round(pixels_frequencies_abs[0][g] / k_value) - 1)) for g in range(256)],
-        [(max(0, round(pixels_frequencies_abs[0][b] / k_value) - 1)) for b in range(256)]
+        [(max(0, round(pixels_frequencies_abs[1][g] / k_value) - 1)) for g in range(256)],
+        [(max(0, round(pixels_frequencies_abs[2][b] / k_value) - 1)) for b in range(256)]
     ]
     return equalizationLUT
+
+def make_specification_table(pixels_frequencies_si):
+    # print(pixels_frequencies_si)
+    specificationLUT = [
+        [pixels_frequencies_si[g]  for g in range(256)],
+    ]
+    # print(specificationLUT)
+    return specificationLUT    
 
 # Método encargado de realizar la transformación de la imagen
 # a una imagen en escala de grises
@@ -191,4 +198,26 @@ def colour_equalization(working_copy_filename, pixels_frequencies_abs, rgb):
                 equalization_value = round(equalizationLUT[0][pixs[i,j][0]])
                 pixs[i,j] = (equalization_value, equalization_value, equalization_value)
         img.save(working_copy_filename)
+        del img
+
+def color_specification(working_copy_filename, pixel_frequency_si, rgb):
+    img = PIL.Image.open(working_copy_filename)
+    pixs = img.load()
+    specificationLUT = make_specification_table(pixel_frequency_si)
+    if (rgb):
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                specification_valueR = round(specificationLUT[0][pixs[i,j][0]])
+                specification_valueG = round(specificationLUT[0][pixs[i,j][1]])
+                specification_valueB = round(specificationLUT[0][pixs[i,j][2]])
+                pixs[i,j] = (specification_valueR, specification_valueG, specification_valueB)
+        img.save(working_copy_filename)
+        del img
+    else:
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                specification_value = round(specificationLUT[0][pixs[i,j][0]])
+                pixs[i,j] = (specification_value, specification_value, specification_value)
+        img.save(working_copy_filename)
+        img.show()
         del img

@@ -86,7 +86,8 @@ if debug == 1:
 
     # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
     # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/7.2.01.tiff'
-    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/larva.tif'
+    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
+    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std.tif'
     # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
     proccessed_image = convert_to_bytes(filename, resize=new_size)
     window['-IMAGE-'].update(proccessed_image)
@@ -105,7 +106,16 @@ if debug == 1:
     information_text = utility.info_imagen(filename, pixel_frequency)
     window['-INFO_TEXT-'].update(information_text)
     window['-INFO_TEXT-'].update(visible = True)
-
+    si_filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std.tif'
+    pixels_wc = function.get_pixel_values(working_copy_filename)
+    pixels_si = function.get_pixel_values(si_filename)
+    pixel_frequency_si = function.calculate_pixel_frequency(pixels_si)
+    pixel_frequency_si_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency_si, rgb)
+    table.color_specification(working_copy_filename, pixel_frequency_si_cum, rgb)
+    proccessed_image = convert_to_bytes(si_filename, resize=new_size)
+    window['-IMAGEWC-'].update(proccessed_image)
+    window['-IMAGEWC-'].update(visible = True)
+    window['-NOMBRE_IMAGEN_RESULTANTE-'].update(si_filename)
 # ---------------- Bucle de eventos ----------------
 while True:
     event, values = window.read(timeout=500)
@@ -244,8 +254,11 @@ while True:
         pixels_wc = function.get_pixel_values(working_copy_filename)
         pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
         # function.draw_absolute_histogram(pixel_frequency, rgb)
-        pixels_frequencies_abs = function.calculate_pixel_frequency_acumulative(pixel_frequency_wc)
-        table.colour_equalization(working_copy_filename, pixels_frequencies_abs, rgb)
+        pixels_frequencies_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency_wc)
+        table.colour_equalization(working_copy_filename, pixels_frequencies_cum, rgb)
+        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
 
     if event == 'Diferencia entre dos imagenes':
         second_filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.08.tiff'
@@ -283,8 +296,6 @@ while True:
                 real_point_x = round(point[0] * real_width/img_width)
                 real_point_y = round(point[1] * real_height/img_height)
                 adapted_roi_clicks.append((real_point_x, real_point_y))
-            print(roi_clicks)
-            print(adapted_roi_clicks)
             draw.rectangle(adapted_roi_clicks, width=1, outline='pink')
             image_dc.save(drawing_copy_filename)
             image_roi = convert_to_bytes(drawing_copy_filename, resize=new_size)

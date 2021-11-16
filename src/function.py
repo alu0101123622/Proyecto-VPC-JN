@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 import PIL.Image
 import collections
 import os.path
+import utility
 
 from numpy import Infinity, log2, sqrt
 
@@ -52,6 +53,12 @@ def calculate_pixel_frequency(pixel_values):
                 blue_pix_freq[pixel[2]] += 1
             else:
                 blue_pix_freq[pixel[2]] = 1
+        # red_pix_freq_ord = collections.OrderedDict(sorted(red_pix_freq.items()))
+        # green_pix_freq_ord = collections.OrderedDict(sorted(green_pix_freq.items()))
+        # blue_pix_freq_ord = collections.OrderedDict(sorted(blue_pix_freq.items()))
+        red_pix_freq = utility.correct_frequency(red_pix_freq)
+        green_pix_freq = utility.correct_frequency(green_pix_freq)
+        blue_pix_freq = utility.correct_frequency(blue_pix_freq)
         red_pix_freq_ord = collections.OrderedDict(sorted(red_pix_freq.items()))
         green_pix_freq_ord = collections.OrderedDict(sorted(green_pix_freq.items()))
         blue_pix_freq_ord = collections.OrderedDict(sorted(blue_pix_freq.items()))
@@ -63,7 +70,9 @@ def calculate_pixel_frequency(pixel_values):
                 grey_pix_freq[pixel] += 1
             else:
                 grey_pix_freq[pixel] = 1
-        return grey_pix_freq 
+        grey_pix_freq = utility.correct_frequency(grey_pix_freq)
+        grey_pix_freq_ord = collections.OrderedDict(sorted(grey_pix_freq.items()))
+        return grey_pix_freq_ord 
 
 ## Method that calculates the normalized histogram of the colors of the image
 def  calculate_normalized_frequencies(frequencies, size):
@@ -84,25 +93,35 @@ def  calculate_normalized_frequencies(frequencies, size):
                 frequencies.update(OrderedDict.fromkeys([pixel_value], frequency / size))
     return frequencies    
 
-def calculate_pixel_frequency_acumulative(pixel_frequency):
-    pixel_frequency_acumulativeA = dict(pixel_frequency[0])
-    pixel_frequency_acumulativeB = dict(pixel_frequency[1])
-    pixel_frequency_acumulativeC = dict(pixel_frequency[2])
-    pixel_frequency_acumulative = [pixel_frequency_acumulativeA, pixel_frequency_acumulativeB, pixel_frequency_acumulativeC]
-    sum = 0
-    for pixel_value, frequency in pixel_frequency_acumulative[0].items():
-        sum += frequency
-        pixel_frequency_acumulative[0].update(OrderedDict.fromkeys([pixel_value], sum))
-    sum = 0
-    for pixel_value, frequency in pixel_frequency_acumulative[1].items():
-        sum += frequency
-        pixel_frequency_acumulative[1].update(OrderedDict.fromkeys([pixel_value], sum))
-    sum = 0
-    for pixel_value, frequency in pixel_frequency_acumulative[2].items():
-        sum += frequency
-        pixel_frequency_acumulative[2].update(OrderedDict.fromkeys([pixel_value], sum))
+def calculate_pixel_frequency_acumulative(pixel_frequency, rgb):
+    if (rgb):
+        # print(pixel_frequency)
+        pixel_frequency_acumulativeA = dict(pixel_frequency[0])
+        pixel_frequency_acumulativeB = dict(pixel_frequency[1])
+        pixel_frequency_acumulativeC = dict(pixel_frequency[2])
+        pixel_frequency_acumulative = [pixel_frequency_acumulativeA, pixel_frequency_acumulativeB, pixel_frequency_acumulativeC]
+        # print(pixel_frequency_acumulative)
+        sum1 = 0
+        for pixel_value, frequency in pixel_frequency_acumulative[0].items():
+            sum1 += frequency
+            pixel_frequency_acumulative[0].update(OrderedDict.fromkeys([pixel_value], sum1))
+        sum2 = 0
+        for pixel_value, frequency in pixel_frequency_acumulative[1].items():
+            sum2 += frequency
+            pixel_frequency_acumulative[1].update(OrderedDict.fromkeys([pixel_value], sum2))
+        sum3 = 0
+        for pixel_value, frequency in pixel_frequency_acumulative[2].items():
+            sum3 += frequency
+            pixel_frequency_acumulative[2].update(OrderedDict.fromkeys([pixel_value], sum3))
+    else:
+        pixel_frequency_acumulative = dict(pixel_frequency)
+        # pixel_frequency_acumulative = [pixel_frequency_acumulativeA]
+        sum1 = 0
+        for pixel_value, frequency in pixel_frequency_acumulative.items():
+            sum1 += frequency
+            pixel_frequency_acumulative.update(OrderedDict.fromkeys([pixel_value], sum1))
     return pixel_frequency_acumulative
-
+    
 ##  Method for creating the histogram of absolute values
 def draw_absolute_histogram(pixel_frequency, rgb):
     if (rgb):
@@ -149,14 +168,30 @@ def draw_absolute_histogram(pixel_frequency, rgb):
             plt.show()
             
 ## Method for creating the histogram of cumulative values
-def draw_acumulative_histogram(array):
-    plt.hist(array, 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
-    plt.xlabel("Valor de intensidad de color")
-    plt.ylabel("Frecuencia")
-    plt.title("Histograma de valores acumulativos")
-    plt.show()
-
-
+def draw_acumulative_histogram(array, rgb):
+    print(array)
+    if (rgb):
+        plt.hist(array[0], 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
+        plt.xlabel("Valor de intensidad de color")
+        plt.ylabel("Frecuencia")
+        plt.title("Histograma de valores acumulativos")
+        plt.show()
+        plt.hist(array[1], 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
+        plt.xlabel("Valor de intensidad de color")
+        plt.ylabel("Frecuencia")
+        plt.title("Histograma de valores acumulativos")
+        plt.show()
+        plt.hist(array[2], 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
+        plt.xlabel("Valor de intensidad de color")
+        plt.ylabel("Frecuencia")
+        plt.title("Histograma de valores acumulativos")
+        plt.show()
+    else:
+        plt.hist(array, 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
+        plt.xlabel("Valor de intensidad de color")
+        plt.ylabel("Frecuencia")
+        plt.title("Histograma de valores acumulativos")
+        plt.show()        
 ## Brightness calculation method
 def brightness(size, pixel_frequency):
     sum = 0
@@ -197,7 +232,8 @@ def entropy(size, pixel_frequency_normalized):
     if (len(pixel_frequency_normalized) == 3):
         for color in pixel_frequency_normalized:
             for pixel_value, frequency in color.items():
-                sum += (frequency * log2(frequency)) / 3
+                if(frequency != 0):
+                    sum += (frequency * log2(frequency)) / 3
     else:
         for pixel_value, frequency in pixel_frequency_normalized.items():
             sum += (frequency * log2(frequency))

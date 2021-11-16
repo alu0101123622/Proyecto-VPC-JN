@@ -32,7 +32,6 @@ def create_working_copy(filename):
     rgbimg = PIL.Image.new('RGB', img.size)
     rgbimg.paste(img)
     working_copy_filename = os.path.splitext(filename)[0] + "_WC.tiff"
-    print(working_copy_filename)
     rgbimg.save(working_copy_filename)
     del img
     return working_copy_filename
@@ -44,7 +43,6 @@ def create_drawing_copy(filename):
     rgbimg = PIL.Image.new('RGB', img.size)
     rgbimg.paste(img)
     drawing_copy_filename = os.path.splitext(filename)[0] + "_DC.tiff"
-    print(drawing_copy_filename)
     rgbimg.save(drawing_copy_filename)
     del img
     return drawing_copy_filename
@@ -98,3 +96,10 @@ def calculate_array_slope(array_points):
             slope = calculate_slope(array_points[point], array_points[point + 1])
             array_slopes.append(slope)
     return array_slopes
+
+def correct_frequency(pixel_frequency):
+    color_array = [ r for r in range(256)]
+    for color in color_array:
+        if color not in pixel_frequency.keys():
+            pixel_frequency[color] = 0
+    return pixel_frequency
