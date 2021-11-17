@@ -19,7 +19,7 @@ import function
 import table
 import input
 
-new_size = int(600), int(600) # Ajusto un tamaño fijo para cualquier imagen de 800x800
+new_size = int(600), int(600)
 filename = ""
 debug = 1
 roi = 0
@@ -29,8 +29,9 @@ roi_clicks = []
 
 working_copy_filename = ''
 drawing_copy_filename = ''
-# Método encargado de convertir en bytes y la imagen cambiará
-# el tamaño de una imagen si es un archivo o un objeto de base64 bytes
+
+## Method in charge of converting into bytes and the image will resize an image 
+## if it is a file or an object of base64 bytes
 def convert_to_bytes(file_or_bytes, resize=None):
     if isinstance(file_or_bytes, str):
         img = Image.open(file_or_bytes)
@@ -40,7 +41,6 @@ def convert_to_bytes(file_or_bytes, resize=None):
         except Exception as e:
             dataBytesIO = io.BytesIO(file_or_bytes)
             img = Image.open(dataBytesIO)
-
     cur_width, cur_height = img.size
     if resize:
         new_width, new_height = resize
@@ -51,8 +51,7 @@ def convert_to_bytes(file_or_bytes, resize=None):
         del img
         return bio.getvalue()
 
-
-# ---------------- Definición de Layout ----------------
+# ---------------- Definition of Layout ----------------
 sg.theme('GreenMono')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Información', ['Imprimir datos', 'Histogramas', ['Histograma absoluto Original', 'Histograma absoluto Working Copy', 'Histograma absoluto acumulado Original', 'Histograma absoluto acumulado Working Copy']],],
@@ -61,7 +60,6 @@ menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']],
             ['Transformación', ['Escala de grises'],]]
 
-# Por ahora solo mostrará el nombre del archivo que se eligió
 image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 10 bold')],
               [sg.Image(key='-IMAGE-', visible = False, enable_events= True)],
               [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 10 bold')],
@@ -71,22 +69,19 @@ imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-',  vis
               [sg.Image(key='-IMAGEWC-', visible = False )],
               [sg.Text(information_text, background_color= "grey", key = '-INFO_TEXT_WC-', visible = False, relief= "raised", font='Arial 10 bold')]]
 
-# ---------------- Layout Completo ----------------
+# ---------------- Full Layout  ----------------
 layout = [[sg.Column(image_col, element_justification='c'),
            sg.VSeparator(),
            sg.Column(imagewc_col, element_justification='c'),
            [sg.Menu(menu_def)]]]
 
-# ---------------- Creación de ventana ----------------
+# ---------------- Window creation ----------------
 window = sg.Window('Multiple Format Image Viewer', layout, resizable=True).Finalize()
 window.Maximize()
 
-# ---------------- Bucle de eventos ----------------
+# ---------------- Event loop ----------------
 while True:
     event, values = window.read(timeout=500)
-    # print(event, values)
-
-
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
     if event == sg.WIN_CLOSED or event == 'Exit':
@@ -97,7 +92,6 @@ while True:
     img_height = window['-IMAGE-'].Widget.winfo_height()
     img_width  = window['-IMAGE-'].Widget.winfo_width()
 
-    # Opciones de la barra superior principal
     if event == 'Abrir':
         filename = sg.popup_get_file("Selecciona la imagen a cargar")
         rgb = utility.is_rgb(filename)
@@ -106,17 +100,16 @@ while True:
         window['-NOMBRE_IMAGEN-'].update(filename)
         window['-NOMBRE_IMAGEN-'].update(visible= True)
         window['-IMAGE-'].update(visible = True)
+
         working_copy_filename = utility.create_working_copy(filename)
         drawing_copy_filename = utility.create_drawing_copy(filename)
+
         pixels = function.get_pixel_values(filename)
         pixel_frequency = function.calculate_pixel_frequency(pixels)
+
         information_text = utility.info_imagen(filename, pixel_frequency)
         window['-INFO_TEXT-'].update(information_text)
         window['-INFO_TEXT-'].update(visible = True)
-#     working_copy_filename = utility.create_working_copy(filename)
-#     img_wc = Image.open(working_copy_filename)
-#     drawing_copy_filename = utility.create_drawing_copy(filename)
-
 
     if event == 'Guardar':
         new_filename = sg.popup_get_file("Guardar como", save_as= True)
@@ -137,7 +130,10 @@ while True:
             window['-IMAGEWC-'].update(proccessed_image)
             window['-IMAGEWC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_SECTIONS_RGB")
-            # information_text = utility.info_imagen(filename, pixels)
+
+            pixels_wc = function.get_pixel_values(working_copy_filename)
+            pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+            information_text = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
             window['-INFO_TEXT-'].update(information_text)
         else:
             table.colour_by_sections(working_copy_filename, array_points, array_slopes)
@@ -145,10 +141,12 @@ while True:
             window['-IMAGEWC-'].update(proccessed_image)
             window['-IMAGEWC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_SECTIONS_B&W")
-            # information_text = utility.info_imagen(filename, pixels)
+
+            pixels_wc = function.get_pixel_values(working_copy_filename)
+            pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+            information_text = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
             window['-INFO_TEXT-'].update(information_text)
 
-    # Opciones de edición
     if event == 'Escala de grises':
         table.colour_to_grayscale(working_copy_filename)
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
@@ -157,33 +155,37 @@ while True:
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
 
-        # information_text = utility.info_imagen(filename, pixels)
-        window['-INFO_TEXT-'].update(information_text)
+        pixels_wc = function.get_pixel_values(working_copy_filename)    
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+        window['-INFO_TEXT_WC-'].update(information_text_wc)
+        window['-INFO_TEXT_WC-'].update(visible = True)
 
     if event == 'Ajuste lineal del brillo y contraste':
-        pixels = function.get_pixel_values(working_copy_filename)
-        frequency = function.calculate_pixel_frequency(pixels)
         img = Image.open(working_copy_filename)
-        brightness = function.brightness(img.size, frequency)
-        contrast = function.contrast(img.size, brightness, frequency)
+        brightness = function.brightness(img.size, pixel_frequency)
+        contrast = function.contrast(img.size, brightness, pixel_frequency)
         new_brigthness = sg.popup_get_text('Introduce el brillo:')
         new_contrast = sg.popup_get_text('Introduce el contrate:')
         table.colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigthness, new_contrast)
-        pixels = function.get_pixel_values(working_copy_filename)
-        frequency = function.calculate_pixel_frequency(pixels)
+
+        pixels_wc = function.get_pixel_values(working_copy_filename)
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+
         window['-IMAGEWC-'].update(proccessed_image)
         window['-IMAGEWC-'].update(visible = True)
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_linearlfit")
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
-        information_text_wc = utility.info_imagen(working_copy_filename, frequency)
+
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
         window['-INFO_TEXT_WC-'].update(information_text_wc)
         window['-INFO_TEXT_WC-'].update(visible = True)
     
     if event == 'Correción Gamma':
-        pixels = function.get_pixel_values(working_copy_filename)
-        frequency = function.calculate_pixel_frequency(pixels)
         img = Image.open(working_copy_filename)
+        pixels_wc = function.get_pixel_values(working_copy_filename)
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
         if (rgb):
             gamma_valueR = sg.popup_get_text('Introduce el valor de correción gamma (R):')
             gamma_valueG = sg.popup_get_text('Introduce el valor de correción gamma (G):')
@@ -193,8 +195,8 @@ while True:
             window['-IMAGEWC-'].update(proccessed_image)
             window['-IMAGEWC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GAMMA_RGB")
-            # information_text = utility.info_imagen(filename, pixels)
-            window['-INFO_TEXT-'].update(information_text)
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+            window['-INFO_TEXT_WC-'].update(information_text_wc)
         else:
             gamma_value = sg.popup_get_text('Introduce el valor de correción gamma:')
             table.colour_to_gamma(working_copy_filename, gamma_value)
@@ -202,40 +204,38 @@ while True:
             window['-IMAGEWC-'].update(proccessed_image)
             window['-IMAGEWC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GAMMA_B&W")
-            # information_text = utility.info_imagen(filename, pixels)
-            window['-INFO_TEXT-'].update(information_text)
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+            window['-INFO_TEXT_WC-'].update(information_text)
 
     if event == 'Histograma absoluto Original':
-        pixels = function.get_pixel_values(filename)
-        pixel_frequency = function.calculate_pixel_frequency(pixels)
         function.draw_absolute_histogram(pixel_frequency, rgb)
 
     if event == 'Histograma absoluto Working Copy':
-        pixels = function.get_pixel_values(working_copy_filename)
-        pixel_frequency = function.calculate_pixel_frequency(pixels)
         function.draw_absolute_histogram(pixel_frequency, rgb)
     
     if event == 'Histograma absoluto acumulado Original':
-        pixels = function.get_pixel_values(filename)
-        pixel_frequency = function.calculate_pixel_frequency(pixels)
         pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency, rgb)
         function.draw_absolute_histogram(pixel_frequency_cum, rgb)
 
     if event == 'Histograma absoluto acumulado Working Copy':
-        pixels = function.get_pixel_values(working_copy_filename)
-        pixel_frequency = function.calculate_pixel_frequency(pixels)
         pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency, rgb)
         function.draw_absolute_histogram(pixel_frequency_cum, rgb)
 
     if event == 'Ecualización del histograma':
         pixels_wc = function.get_pixel_values(working_copy_filename)
         pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-        # function.draw_absolute_histogram(pixel_frequency, rgb)
+
+        function.draw_absolute_histogram(pixel_frequency, rgb)
         pixels_frequencies_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, rgb)
+
         table.colour_equalization(working_copy_filename, pixels_frequencies_cum, rgb)
+
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)
         window['-IMAGEWC-'].update(visible = True)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_ECUALIZACION")
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+        window['-INFO_TEXT_WC-'].update(information_text_wc)
     
     if event == 'Especificación del histograma':
         img_wc = Image.open(working_copy_filename)
@@ -259,7 +259,9 @@ while True:
         proccessed_image = convert_to_bytes(si_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)
         window['-IMAGEWC-'].update(visible = True)
-        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(si_filename)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(si_filename + "_ESPECIFICACIÓN")
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+        window['-INFO_TEXT_WC-'].update(information_text_wc)
 
 
     if event == 'Diferencia entre dos imagenes':
@@ -276,7 +278,9 @@ while True:
         function.draw_absolute_histogram(pixel_frequency_difference, rgb)
         function.draw_image_difference(difference_filename, 30)
 
-    # Detección de click en imagen para crear ROI
+        proccessed_image = convert_to_bytes(si_filename, resize=new_size)
+
+## Detection of click on image to create ROI
     if event == '-IMAGE-' :
         if (len(roi_clicks) < 2):
             roi_clicks.append(input.cursor_image_pos_for_rectangle(x_pos , y_pos))
@@ -309,7 +313,7 @@ while True:
             window['-IMAGEWC-'].update(visible = True)            
             roi = 1
 
-    # Instrucciones a ejecutarse cada 25 ms
+## Instructions to be executed every 25 ms
     if (input.is_cursor_over_image(x_pos , y_pos, img_height, img_width)):
         window['-MOUSE_POS-'].update(visible = True)
         window['-MOUSE_POS-'].update(input.cursor_image_pos(x_pos , y_pos))
@@ -319,8 +323,6 @@ while True:
     if event == '-IMAGEWC-':
         if (len(roi_clicks) < 2):
             roi_clicks.append(input.cursor_image_pos_for_rectangle(x_pos , y_pos))
-
-
     
 os.remove(working_copy_filename)
 os.remove(drawing_copy_filename)
