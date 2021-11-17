@@ -51,7 +51,7 @@ def convert_to_bytes(file_or_bytes, resize=None):
         del img
         return bio.getvalue()
 
-# ---------------- Definition of Layout ----------------
+## ---------------- Definition of Layout ---------------- ##
 sg.theme('GreenMono')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Información', ['Imprimir datos', 'Histogramas', ['Histograma absoluto Original', 'Histograma absoluto Working Copy', 'Histograma absoluto acumulado Original', 'Histograma absoluto acumulado Working Copy']],],
@@ -69,17 +69,17 @@ imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-',  vis
               [sg.Image(key='-IMAGEWC-', visible = False )],
               [sg.Text(information_text, background_color= "grey", key = '-INFO_TEXT_WC-', visible = False, relief= "raised", font='Arial 10 bold')]]
 
-# ---------------- Full Layout  ----------------
+## ---------------- Full Layout  ---------------- ##
 layout = [[sg.Column(image_col, element_justification='c'),
            sg.VSeparator(),
            sg.Column(imagewc_col, element_justification='c'),
            [sg.Menu(menu_def)]]]
 
-# ---------------- Window creation ----------------
+##---------------- Window creation ---------------- ##
 window = sg.Window('Multiple Format Image Viewer', layout, resizable=True).Finalize()
 window.Maximize()
 
-# ---------------- Event loop ----------------
+## ---------------- Event loop ---------------- ##
 while True:
     event, values = window.read(timeout=500)
     if event in (sg.WIN_CLOSED, 'Exit'):

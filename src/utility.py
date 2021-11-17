@@ -24,8 +24,8 @@ def is_rgb(filename):
         return 1
     return 0
 
-# Method in charge of making a working copy
-# for the visualization of the different transformations
+## Method in charge of making a working copy
+## for the visualization of the different transformations
 def create_working_copy(filename):
     global working_copy_filename 
     global drawing_copy_filename
@@ -51,13 +51,13 @@ def create_drawing_copy(filename):
     return drawing_copy_filename
 
 ## Method responsible for opening the drawing copy
-# for roi display
+## for roi display
 def open_drawing_copy(filename):
     img = PIL.Image.open(filename)
     return img
 
 ## Method in charge of saving the changes made in
-# a copy of the original
+## a copy of the original
 def save_as(saves_as_filename):
     global working_copy_filename 
     global drawing_copy_filename

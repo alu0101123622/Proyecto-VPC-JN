@@ -98,8 +98,8 @@ def make_specification_table(pixel_frequency_wc_cum, pixel_frequency_si_cum):
         specificationLUT[color] = g2
     return specificationLUT    
 
-# Method in charge of performing the image transformation
-# to a grayscale image
+## Method in charge of performing the image transformation
+## to a grayscale image
 def colour_to_grayscale(working_copy_filename):
     grayscaleLUT = make_grayscale_table()
     img = PIL.Image.open(working_copy_filename)

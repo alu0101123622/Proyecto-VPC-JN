@@ -32,20 +32,20 @@ def calculate_pixel_frequency(pixel_values):
     red_pix_freq =   {}
     green_pix_freq = {}
     blue_pix_freq =  {}
-    if type(pixel_values[0]) == tuple:   # Color image
-        # RED
+    if type(pixel_values[0]) == tuple:   ## Color image
+        ## RED
         for pixel in pixel_values:
             if pixel[0] in red_pix_freq:
                 red_pix_freq[pixel[0]] += 1
             else:
                 red_pix_freq[pixel[0]] = 1
-      # GREEN
+      ## GREEN
         for pixel in pixel_values:
             if pixel[1] in green_pix_freq:
                 green_pix_freq[pixel[1]] += 1
             else:
                 green_pix_freq[pixel[1]] = 1
-        # BLUE
+        ## BLUE
         for pixel in pixel_values:
             if pixel[2] in blue_pix_freq:
                 blue_pix_freq[pixel[2]] += 1
@@ -58,7 +58,7 @@ def calculate_pixel_frequency(pixel_values):
         green_pix_freq_ord = collections.OrderedDict(sorted(green_pix_freq.items()))
         blue_pix_freq_ord = collections.OrderedDict(sorted(blue_pix_freq.items()))
         return red_pix_freq_ord, green_pix_freq_ord, blue_pix_freq_ord
-    # B&W Image
+    ## B&W Image
     else:                                      
         for pixel in pixel_values:
             if pixel in grey_pix_freq:
@@ -113,7 +113,7 @@ def draw_absolute_histogram(pixel_frequency, rgb):
         plt.ylabel("Frecuencia")
         plt.title("Histograma de valores absolutos")
         plt.show()
-        # GREEN
+        ## GREEN
         keys = pixel_frequency[1].keys()
         values = pixel_frequency[1].values()
         plt.bar(keys, values, color='green', width=1.0)
@@ -121,7 +121,7 @@ def draw_absolute_histogram(pixel_frequency, rgb):
         plt.ylabel("Frecuencia")
         plt.title("Histograma de valores absolutos")
         plt.show()  
-        # BLUE
+        ## BLUE
         keys = pixel_frequency[2].keys()
         values = pixel_frequency[2].values()
         plt.bar(keys, values, color='blue', width=1.0)
