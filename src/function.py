@@ -94,32 +94,32 @@ def  calculate_normalized_frequencies(frequencies, size):
     return frequencies    
 
 def calculate_pixel_frequency_acumulative(pixel_frequency, rgb):
-    if (rgb):
+    # if (rgb):
         # print(pixel_frequency)
-        pixel_frequency_acumulativeA = dict(pixel_frequency[0])
-        pixel_frequency_acumulativeB = dict(pixel_frequency[1])
-        pixel_frequency_acumulativeC = dict(pixel_frequency[2])
-        pixel_frequency_acumulative = [pixel_frequency_acumulativeA, pixel_frequency_acumulativeB, pixel_frequency_acumulativeC]
-        # print(pixel_frequency_acumulative)
-        sum1 = 0
-        for pixel_value, frequency in pixel_frequency_acumulative[0].items():
-            sum1 += frequency
-            pixel_frequency_acumulative[0].update(OrderedDict.fromkeys([pixel_value], sum1))
-        sum2 = 0
-        for pixel_value, frequency in pixel_frequency_acumulative[1].items():
-            sum2 += frequency
-            pixel_frequency_acumulative[1].update(OrderedDict.fromkeys([pixel_value], sum2))
-        sum3 = 0
-        for pixel_value, frequency in pixel_frequency_acumulative[2].items():
-            sum3 += frequency
-            pixel_frequency_acumulative[2].update(OrderedDict.fromkeys([pixel_value], sum3))
-    else:
-        pixel_frequency_acumulative = dict(pixel_frequency)
-        # pixel_frequency_acumulative = [pixel_frequency_acumulativeA]
-        sum1 = 0
-        for pixel_value, frequency in pixel_frequency_acumulative.items():
-            sum1 += frequency
-            pixel_frequency_acumulative.update(OrderedDict.fromkeys([pixel_value], sum1))
+    pixel_frequency_acumulativeA = dict(pixel_frequency[0])
+    pixel_frequency_acumulativeB = dict(pixel_frequency[1])
+    pixel_frequency_acumulativeC = dict(pixel_frequency[2])
+    pixel_frequency_acumulative = [pixel_frequency_acumulativeA, pixel_frequency_acumulativeB, pixel_frequency_acumulativeC]
+    # print(pixel_frequency_acumulative)
+    sum1 = 0
+    for pixel_value, frequency in pixel_frequency_acumulative[0].items():
+        sum1 += frequency
+        pixel_frequency_acumulative[0].update(OrderedDict.fromkeys([pixel_value], sum1))
+    sum2 = 0
+    for pixel_value, frequency in pixel_frequency_acumulative[1].items():
+        sum2 += frequency
+        pixel_frequency_acumulative[1].update(OrderedDict.fromkeys([pixel_value], sum2))
+    sum3 = 0
+    for pixel_value, frequency in pixel_frequency_acumulative[2].items():
+        sum3 += frequency
+        pixel_frequency_acumulative[2].update(OrderedDict.fromkeys([pixel_value], sum3))
+    # else:
+    #     pixel_frequency_acumulative = dict(pixel_frequency)
+    #     # pixel_frequency_acumulative = [pixel_frequency_acumulativeA]
+    #     sum1 = 0
+    #     for pixel_value, frequency in pixel_frequency_acumulative.items():
+    #         sum1 += frequency
+    #         pixel_frequency_acumulative.update(OrderedDict.fromkeys([pixel_value], sum1))
     return pixel_frequency_acumulative
     
 ##  Method for creating the histogram of absolute values
@@ -169,23 +169,32 @@ def draw_absolute_histogram(pixel_frequency, rgb):
             
 ## Method for creating the histogram of cumulative values
 def draw_acumulative_histogram(array, rgb):
-    print(array)
+    # print(array)
     if (rgb):
-        plt.hist(array[0], 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
-        plt.xlabel("Valor de intensidad de color")
-        plt.ylabel("Frecuencia")
-        plt.title("Histograma de valores acumulativos")
+
+        keys = array[0].keys()
+        values = array[0].values()
+        plt.bar(keys, values, color='red', width=1.0)
+        plt.xlabel("Valor de intensidad del color rojo")
+        plt.ylabel("Frecuencia acumulada")
+        plt.title("Histograma de valores absolutos")
         plt.show()
-        plt.hist(array[1], 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
-        plt.xlabel("Valor de intensidad de color")
-        plt.ylabel("Frecuencia")
-        plt.title("Histograma de valores acumulativos")
-        plt.show()
-        plt.hist(array[2], 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
-        plt.xlabel("Valor de intensidad de color")
-        plt.ylabel("Frecuencia")
-        plt.title("Histograma de valores acumulativos")
-        plt.show()
+
+        # plt.hist(array[0], 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
+        # plt.xlabel("Valor de intensidad de color")
+        # plt.ylabel("Frecuencia")
+        # plt.title("Histograma de valores acumulativos")
+        # plt.show()
+        # plt.hist(array[1], 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
+        # plt.xlabel("Valor de intensidad de color")
+        # plt.ylabel("Frecuencia")
+        # plt.title("Histograma de valores acumulativos")
+        # plt.show()
+        # plt.hist(array[2], 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
+        # plt.xlabel("Valor de intensidad de color")
+        # plt.ylabel("Frecuencia")
+        # plt.title("Histograma de valores acumulativos")
+        # plt.show()
     else:
         plt.hist(array, 256, range=[0, 255], histtype='bar', color = "grey", edgecolor= "black", cumulative = True)
         plt.xlabel("Valor de intensidad de color")
@@ -294,5 +303,11 @@ def draw_image_difference(difference_filename, t):
     difference_filename.show()
     # difference_filename.save(difference_filename)
 
-
-    
+def find_closest_index(original_accumulative_freq_value, pixel_frequency_si_cum):
+    desired_index = 0
+    for i in range(256):
+        if(pixel_frequency_si_cum[0][i] <= original_accumulative_freq_value):
+            desired_index = i
+        else:
+            return desired_index
+    return desired_index

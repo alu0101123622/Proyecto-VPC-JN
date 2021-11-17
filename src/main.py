@@ -27,6 +27,8 @@ rgb = 0
 information_text = ''
 roi_clicks = []
 
+working_copy_filename = ''
+drawing_copy_filename = ''
 # Método encargado de convertir en bytes y la imagen cambiará
 # el tamaño de una imagen si es un archivo o un objeto de base64 bytes
 def convert_to_bytes(file_or_bytes, resize=None):
@@ -79,68 +81,41 @@ layout = [[sg.Column(image_col, element_justification='c'),
 window = sg.Window('Multiple Format Image Viewer', layout, resizable=True).Finalize()
 window.Maximize()
 
-
-if debug == 1:
-    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.07.tiff'
-    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/tanque-anterior.tif'  
-
-    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/larva.tif'
-    # filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/7.2.01.tiff'
-    filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
-    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std.tif'
-    # filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/4.1.03.tiff'
-    proccessed_image = convert_to_bytes(filename, resize=new_size)
-    window['-IMAGE-'].update(proccessed_image)
-    window['-IMAGE-'].update(visible = True)
-    window['-NOMBRE_IMAGEN-'].update(filename)
-    window['-NOMBRE_IMAGEN-'].update(visible = True)
-
-    rgb = utility.is_rgb(filename)
-    working_copy_filename = utility.create_working_copy(filename)
-    drawing_copy_filename = utility.create_drawing_copy(filename)
-
-    pixels = function.get_pixel_values(filename)
-    pixel_frequency = function.calculate_pixel_frequency(pixels)
-    # function.draw_absolute_histogram(pixel_frequency, rgb)
-    # normalizated_frequency = function.calculate_normalized_frequencies(pixel_frequency, len(pixels))
-    information_text = utility.info_imagen(filename, pixel_frequency)
-    window['-INFO_TEXT-'].update(information_text)
-    window['-INFO_TEXT-'].update(visible = True)
-    si_filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std.tif'
-    pixels_wc = function.get_pixel_values(working_copy_filename)
-    pixels_si = function.get_pixel_values(si_filename)
-    pixel_frequency_si = function.calculate_pixel_frequency(pixels_si)
-    pixel_frequency_si_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency_si, rgb)
-    table.color_specification(working_copy_filename, pixel_frequency_si_cum, rgb)
-    proccessed_image = convert_to_bytes(si_filename, resize=new_size)
-    window['-IMAGEWC-'].update(proccessed_image)
-    window['-IMAGEWC-'].update(visible = True)
-    window['-NOMBRE_IMAGEN_RESULTANTE-'].update(si_filename)
 # ---------------- Bucle de eventos ----------------
 while True:
     event, values = window.read(timeout=500)
     # print(event, values)
+
+
+    if event in (sg.WIN_CLOSED, 'Exit'):
+        break
+    if event == sg.WIN_CLOSED or event == 'Exit':
+        break
 
     x_pos = window['-IMAGE-'].Widget.winfo_rootx()
     y_pos = window['-IMAGE-'].Widget.winfo_rooty()
     img_height = window['-IMAGE-'].Widget.winfo_height()
     img_width  = window['-IMAGE-'].Widget.winfo_width()
 
-    if event in (sg.WIN_CLOSED, 'Exit'):
-        break
-    if event == sg.WIN_CLOSED or event == 'Exit':
-        break
     # Opciones de la barra superior principal
     if event == 'Abrir':
-        # sg.popup('About this program', 'Version 1.0', 'PySimpleGUI rocks...') #--> PARA LA INFORMACION DE LA IMAGEN      
         filename = sg.popup_get_file("Selecciona la imagen a cargar")
+        rgb = utility.is_rgb(filename)
         proccessed_image = convert_to_bytes(filename, resize=new_size)
         window['-IMAGE-'].update(proccessed_image)
         window['-NOMBRE_IMAGEN-'].update(filename)
+        window['-NOMBRE_IMAGEN-'].update(visible= True)
+        window['-IMAGE-'].update(visible = True)
         working_copy_filename = utility.create_working_copy(filename)
+        drawing_copy_filename = utility.create_drawing_copy(filename)
         pixels = function.get_pixel_values(filename)
-        frequency = function.frequency(pixels)
-        utility.info_imagen(filename, pixels)
+        pixel_frequency = function.calculate_pixel_frequency(pixels)
+        information_text = utility.info_imagen(filename, pixel_frequency)
+        window['-INFO_TEXT-'].update(information_text)
+        window['-INFO_TEXT-'].update(visible = True)
+#     working_copy_filename = utility.create_working_copy(filename)
+#     img_wc = Image.open(working_copy_filename)
+#     drawing_copy_filename = utility.create_drawing_copy(filename)
 
 
     if event == 'Guardar':
@@ -243,35 +218,62 @@ while True:
     if event == 'Histograma absoluto acumulado Original':
         pixels = function.get_pixel_values(filename)
         pixel_frequency = function.calculate_pixel_frequency(pixels)
-        function.draw_acumulative_histogram(pixel_frequency, rgb)
+        pixel_frequency_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency, rgb)
+        function.draw_absolute_histogram(pixel_frequency_cum, rgb)
 
     if event == 'Histograma absoluto acumulado Working Copy':
         pixels = function.get_pixel_values(working_copy_filename)
         pixel_frequency = function.calculate_pixel_frequency(pixels)
-        function.draw_acumulative_histogram(pixel_frequency, rgb)
+        pixel_frequency_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency, rgb)
+        function.draw_absolute_histogram(pixel_frequency_cum, rgb)
 
     if event == 'Ecualización del histograma':
         pixels_wc = function.get_pixel_values(working_copy_filename)
         pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
         # function.draw_absolute_histogram(pixel_frequency, rgb)
-        pixels_frequencies_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency_wc)
+        pixels_frequencies_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency_wc, rgb)
         table.colour_equalization(working_copy_filename, pixels_frequencies_cum, rgb)
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)
         window['-IMAGEWC-'].update(visible = True)
+    
+    if event == 'Especificación del histograma':
+        img_wc = Image.open(working_copy_filename)
+        si_filename = sg.popup_get_file("Selecciona la imagen a cargar")
+        img_si = Image.open(si_filename)
+        working_copy_filename_si = utility.create_working_copy(si_filename)
+
+        pixels_wc = function.get_pixel_values(working_copy_filename)
+        pixels_si = function.get_pixel_values(working_copy_filename_si)
+
+        pixel_frequency_si = function.calculate_pixel_frequency(pixels_si)
+        pixel_frequency_si_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency_si, rgb)
+        pixel_frequency_si_cum_norm = function.calculate_normalized_frequencies(pixel_frequency_si_cum, img_si.size)
+
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        pixel_frequency_wc_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency_wc, rgb)
+        pixel_frequency_wc_cum_norm = function.calculate_normalized_frequencies(pixel_frequency_wc_cum, img_wc.size)
+
+        table.color_specification(working_copy_filename, pixel_frequency_wc_cum_norm, pixel_frequency_si_cum_norm, rgb)
+
+        proccessed_image = convert_to_bytes(si_filename, resize=new_size)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(si_filename)
+
 
     if event == 'Diferencia entre dos imagenes':
-        second_filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/4.1.08.tiff'
-        # second_filename = 'C:/Users/Jorge/Documents/GitHub/Proyecto-VPC-JN/VPCIMG/tanque-posterior.tif'  
+        second_filename = sg.popup_get_file("Selecciona la segunda imagen a cargar")
         working_copy_second_filename = utility.create_working_copy(second_filename)
         second_proccessed_image = convert_to_bytes(working_copy_second_filename, resize=new_size)
         window['-IMAGEWC-'].update(second_proccessed_image)
         window['-IMAGEWC-'].update(visible = True)
-        # second_filename = sg.popup_get_file("Selecciona la segunda imagen a comparar")
+
         difference_filename = function.image_difference(working_copy_filename, working_copy_second_filename)
-        pixels = function.get_pixel_values(difference_filename)
-        pixel_frequency = function.calculate_pixel_frequency(pixels)
-        function.draw_absolute_histogram(pixel_frequency, rgb)
+        pixels_difference = function.get_pixel_values(difference_filename)
+        pixel_frequency_difference = function.calculate_pixel_frequency(pixels_difference)
+
+        function.draw_absolute_histogram(pixel_frequency_difference, rgb)
         function.draw_image_difference(difference_filename, 30)
 
     # Detección de click en imagen para crear ROI
@@ -306,8 +308,6 @@ while True:
             window['-IMAGEWC-'].update(proccessed_image)
             window['-IMAGEWC-'].update(visible = True)            
             roi = 1
-
-        # print(roi_clicks)
 
     # Instrucciones a ejecutarse cada 25 ms
     if (input.is_cursor_over_image(x_pos , y_pos, img_height, img_width)):

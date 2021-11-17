@@ -28,6 +28,8 @@ def is_rgb(filename):
 # Método encargado de realizar una copia de trabajo
 # para la visualización de las distintas transformaciones
 def create_working_copy(filename):
+    global working_copy_filename 
+    global drawing_copy_filename
     img = PIL.Image.open(filename)
     rgbimg = PIL.Image.new('RGB', img.size)
     rgbimg.paste(img)
@@ -39,6 +41,8 @@ def create_working_copy(filename):
 # Método encargado de realizar una copia de dibujo
 # para la visualización del roi
 def create_drawing_copy(filename):
+    global working_copy_filename 
+    global drawing_copy_filename
     img = PIL.Image.open(filename)
     rgbimg = PIL.Image.new('RGB', img.size)
     rgbimg.paste(img)
@@ -56,6 +60,8 @@ def open_drawing_copy(filename):
 # Método encargado de guardar los cambios realizados en
 # una copia de la original
 def save_as(saves_as_filename):
+    global working_copy_filename 
+    global drawing_copy_filename
     img = PIL.Image.open(working_copy_filename)
     img.save(saves_as_filename + ".tiff")
     del img
