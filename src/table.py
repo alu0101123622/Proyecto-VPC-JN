@@ -12,6 +12,7 @@ import PIL.Image
 import function
 import numpy as np
 
+## LUT of grayscale
 def make_grayscale_table():
     grayscaleLUT = [
         [r * 0.299 for r in range(256)],
@@ -20,6 +21,7 @@ def make_grayscale_table():
     ]
     return grayscaleLUT
 
+## LUT of linearfit
 def make_linearfit_table(brightness, contrast, new_brightness, new_contrast):
     brightness = round(float(brightness), 3)
     constants = round(float(contrast), 3)
@@ -40,6 +42,7 @@ def make_linearfit_table(brightness, contrast, new_brightness, new_contrast):
     ]
     return linearfitLUT
 
+## LUT of gamma in B&W img
 def make_gamma_table(gamma_value):
     gamma_value = round(float(gamma_value), 3)
     gammaLUT = [
@@ -49,6 +52,7 @@ def make_gamma_table(gamma_value):
     ]
     return gammaLUT
 
+## LUT of gamma in color img
 def make_gamma_table_RGB(gamma_valueR, gamma_valueG, gamma_valueB):
     gamma_valueR = round(float(gamma_valueR), 3)
     gamma_valueG = round(float(gamma_valueG), 3)
@@ -60,9 +64,9 @@ def make_gamma_table_RGB(gamma_valueR, gamma_valueG, gamma_valueB):
     ]
     return gammaLUT
 
+## LUT of sections
 def make_sections_table(array_points, array_slopes):
     array_points.pop(0)
-    # sectionsLUT = []
     color_array = []
     color_array_aux = []
     for point, (i, j) in enumerate(array_points):
@@ -73,11 +77,9 @@ def make_sections_table(array_points, array_slopes):
         color_array.append(color)
     for color in color_array:
         color_array_aux += color
-    
-    # for color in range(3):
-    #     sectionsLUT.append(color_array_aux[color])
     return color_array_aux
 
+## LUT of equalization
 def make_equalization_table(pixels_frequencies_abs, size):
     k_value = size / 256
     equalizationLUT = [
@@ -87,20 +89,17 @@ def make_equalization_table(pixels_frequencies_abs, size):
     ]
     return equalizationLUT
 
+## LUT of specification
 def make_specification_table(pixel_frequency_wc_cum, pixel_frequency_si_cum):
-    #print(pixels_frequencies_si)
     specificationLUT = [c for c in range(256)]
     for color in range(256):
         fg1 = pixel_frequency_wc_cum[0][color]
         g2 =  function.find_closest_index(fg1, pixel_frequency_si_cum)
         specificationLUT[color] = g2
-    # print(specificationLUT)
     return specificationLUT    
 
-
-
-# Método encargado de realizar la transformación de la imagen
-# a una imagen en escala de grises
+# Method in charge of performing the image transformation
+# to a grayscale image
 def colour_to_grayscale(working_copy_filename):
     grayscaleLUT = make_grayscale_table()
     img = PIL.Image.open(working_copy_filename)
@@ -116,6 +115,7 @@ def colour_to_grayscale(working_copy_filename):
     img.save(working_copy_filename)
     del img
 
+## Method in charge of making the linear adjustment of the brightness and contrast of the image
 def colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigthness, new_contrast):
     img  = PIL.Image.open(working_copy_filename)
     pixs = img.load()
@@ -141,7 +141,7 @@ def colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigth
     img.save(working_copy_filename)
     del img
 
-
+## Method responsible for gamma correction of a color image
 def colour_to_gamma_RGB(working_copy_filename, gamma_valueR, gamma_valueG, gamma_valueB):
     gammaLUT = make_gamma_table_RGB(gamma_valueR, gamma_valueG, gamma_valueB)
     img = PIL.Image.open(working_copy_filename)
@@ -155,6 +155,7 @@ def colour_to_gamma_RGB(working_copy_filename, gamma_valueR, gamma_valueG, gamma
     img.save(working_copy_filename)
     del img
 
+## Method responsible for gamma correction of a B&W image
 def colour_to_gamma(working_copy_filename, gamma_value):
     gammaLUT = make_gamma_table(gamma_value)
     img = PIL.Image.open(working_copy_filename)
@@ -166,6 +167,7 @@ def colour_to_gamma(working_copy_filename, gamma_value):
     img.save(working_copy_filename)
     del img
 
+## Method in charge of transforming a color image by sections
 def colour_by_sections_RGB(working_copy_filename, array_points, array_slopes):
     sectionsLUT = make_sections_table(array_points, array_slopes)
     img = PIL.Image.open(working_copy_filename)
@@ -179,6 +181,7 @@ def colour_by_sections_RGB(working_copy_filename, array_points, array_slopes):
     img.save(working_copy_filename)
     del img
 
+## Method in charge of transforming a B&W image by sections
 def colour_by_sections(working_copy_filename, array_points, array_slopes):
     sectionsLUT = make_sections_table(array_points, array_slopes)
     img = PIL.Image.open(working_copy_filename)
@@ -190,6 +193,7 @@ def colour_by_sections(working_copy_filename, array_points, array_slopes):
     img.save(working_copy_filename)
     del img
 
+## Method in charge of performing the equalization of an image
 def colour_equalization(working_copy_filename, pixels_frequencies_abs, rgb):
     img = PIL.Image.open(working_copy_filename)
     pixs = img.load()
@@ -213,6 +217,7 @@ def colour_equalization(working_copy_filename, pixels_frequencies_abs, rgb):
         img.save(working_copy_filename)
         del img
 
+## Method responsible for specifying an image
 def color_specification(working_copy_filename, pixel_frequency_wc_cum, pixel_frequency_si_cum, rgb):
     img = PIL.Image.open(working_copy_filename)
     pixs = img.load()
