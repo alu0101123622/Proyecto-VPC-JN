@@ -20,4 +20,5 @@ This project has been carried out by:
 **Execution examples:**
 > Linear transformations by sections.
 
-![imagenoriginal](VPCIMG/4.1.04.tiff)
+![imagenoriginal](./VPCIMG/readme/imagenorigina.PNG)
+![imagenoriginal2](./VPCIMG/readme/imagenmod.PNG)
