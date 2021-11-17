@@ -1,22 +1,23 @@
-# Proyecto-VPC-JN
+# **COMPUTER VISION PROJECT (DIGITAL IMAGE PROCESSING)**
+### *LINEAR / NON-LINEAR TRANSFORMATIONS OF THE LEVELS OF GRAY*
+Repository in which the code and tests of the first practice of the Computer Vision subject are located.
+We have worked with: <https://pysimplegui.readthedocs.io/en/latest/>.
 
-Repositorio en el que se ubica el código y pruebas de mla primera práctica de la asignatura de Visión por Computador.
-Trabajaremos con: <https://pysimplegui.readthedocs.io/en/latest/> seguir tutorial de instalación para Python 3.
+**OBJECTIVES**:
+- Creation of the work environment to load, transform and display images
+as well as other information elements associated with them.
+-  Coding, testing and using linear operations of transformation of the levels
+gray on a digital image to change the visual appearance of the image
+acting on its brightness and contrast.
+- Code, test and use non-linear transformations on gray levels
+based on the alteration of the histogram.
 
-> 19/10/2021
+This project has been carried out by:
+- Jorge Acevedo de León
+- Nerea Rodríguez Hernández
 
-Lo primero que he hecho ha sido cambiar el tema:
 
-```python
-sg.theme('Dark Grey 3')
-```
+**Execution examples:**
+> Linear transformations by sections.
 
-Ademas he editado el código base para conseguir que en lugar de toda la ruta solo se mostrara el nombre de la imagen abierta:
-
-```python
-shortname = values['-FILE LIST-'][0] 
-```
-
-Para evitar que el tamaño y posición de la ventana cambien en función del tamaño original de cada imagen, definí el tamaño estándar de 1080x720 pixeles, aún así, se le sigue dando la opción al usuario de cambiar el tamaño de la imagen al que desee:
-
-[![Boton de Resize](https://i.gyazo.com/7925e99d122ba0e224513a1edd0663e7.png)](https://gyazo.com/7925e99d122ba0e224513a1edd0663e7)
+![imagenoriginal](VPCIMG/4.1.04.tiff)
