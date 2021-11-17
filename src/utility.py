@@ -16,6 +16,7 @@ import function
 working_copy_filename = ""
 drawing_copy_filename = ""
 
+## Method in charge of checking if an image is in color
 def is_rgb(filename):
     img = PIL.Image.open(filename)
     pix = img.load()
@@ -23,9 +24,8 @@ def is_rgb(filename):
         return 1
     return 0
 
-
-# Método encargado de realizar una copia de trabajo
-# para la visualización de las distintas transformaciones
+# Method in charge of making a working copy
+# for the visualization of the different transformations
 def create_working_copy(filename):
     global working_copy_filename 
     global drawing_copy_filename
@@ -37,8 +37,8 @@ def create_working_copy(filename):
     del img
     return working_copy_filename
 
-# Método encargado de realizar una copia de dibujo
-# para la visualización del roi
+## Method responsible for making a drawing copy
+## for roi display
 def create_drawing_copy(filename):
     global working_copy_filename 
     global drawing_copy_filename
@@ -50,14 +50,14 @@ def create_drawing_copy(filename):
     del img
     return drawing_copy_filename
 
-# Método encargado de abrir la copia de dibujo
-# para la visualización del roi
+## Method responsible for opening the drawing copy
+# for roi display
 def open_drawing_copy(filename):
     img = PIL.Image.open(filename)
     return img
 
-# Método encargado de guardar los cambios realizados en
-# una copia de la original
+## Method in charge of saving the changes made in
+# a copy of the original
 def save_as(saves_as_filename):
     global working_copy_filename 
     global drawing_copy_filename
@@ -65,7 +65,7 @@ def save_as(saves_as_filename):
     img.save(saves_as_filename + ".tiff")
     del img
 
-# Método encargado de mostrar la información de la imagen
+## Method responsible for displaying image information
 def info_imagen(filename, pixels):
     img = PIL.Image.open(filename)
     width, height = img.size
@@ -77,16 +77,17 @@ def info_imagen(filename, pixels):
     return ('Height: %s | Width: %s | Brightness: %s | Contrast: %s |  Min: %s | Max: %s | Entropy: %s' % 
     (str(height), str(width), str(round(brightness, 3)), str(round(contrast, 3)), str(min), str(max), str(round(entropy, 3))))
 
+## Method in charge of calculating the size of the image
 def image_size(filename):
     img = PIL.Image.open(filename)
     width, height = img.size   
     return (width, height) 
 
+## Method responsible for creating the roi image
 def create_image_roi(roi_points, filename):
     img = PIL.Image.open(filename)
     base_image = PIL.Image.new('RGB', img.size)
     base_image.paste(img)
-    # region_image = PIL.Image.new()
     region = base_image.crop((roi_points[0][0], roi_points[0][1], roi_points[1][0], roi_points[1][1]))
     return region
 
