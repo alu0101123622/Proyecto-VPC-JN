@@ -1,13 +1,12 @@
 """
-    Universidad de La Laguna - Grado en Ingenería Informática
-    Cuarto Curso - Visión por Computador
+    University of La Laguna - Degree in Computer Engineering
+    Fourth grade - Computer vision
     2021-2022
 
-    Autores:    Jorge Acevedo de León       -   alu0101123622@ull.edu.es
+    Authors:    Jorge Acevedo de León       -   alu0101123622@ull.edu.es
                 Nerea Rodríguez Hernández   -   alu0101215693@ull.edu.es
     
-    Fichero utility.py: Fichero donde se definen distintos tipos de métodos
-                        para el manejo de imagenes
+    File utility.py: Functional functions
 """
 import os.path
 import PIL.Image

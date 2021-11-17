@@ -1,12 +1,12 @@
 """
-    Universidad de La Laguna - Grado en Ingenería Informática
-    Cuarto Curso - Visión por Computador
+    University of La Laguna - Degree in Computer Engineering
+    Fourth grade - Computer vision
     2021-2022
 
-    Autores:    Jorge Acevedo de León       -   alu0101123622@ull.edu.es
+    Authors:    Jorge Acevedo de León       -   alu0101123622@ull.edu.es
                 Nerea Rodríguez Hernández   -   alu0101215693@ull.edu.es
     
-    Fichero main.py: Programa principal del proyecto
+    File input.py: Input functions are implemented.
 """
 import pyautogui
 

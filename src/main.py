@@ -1,12 +1,12 @@
 """
-    Universidad de La Laguna - Grado en Ingenería Informática
-    Cuarto Curso - Visión por Computador
+    University of La Laguna - Degree in Computer Engineering
+    Fourth grade - Computer vision
     2021-2022
 
-    Autores:    Jorge Acevedo de León       -   alu0101123622@ull.edu.es
+    Authors:    Jorge Acevedo de León       -   alu0101123622@ull.edu.es
                 Nerea Rodríguez Hernández   -   alu0101215693@ull.edu.es
     
-    Fichero main.py: Programa principal del proyecto
+    File main.py: Main program file
 """
 import PySimpleGUI as sg
 import os.path
@@ -218,20 +218,20 @@ while True:
     if event == 'Histograma absoluto acumulado Original':
         pixels = function.get_pixel_values(filename)
         pixel_frequency = function.calculate_pixel_frequency(pixels)
-        pixel_frequency_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency, rgb)
+        pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency, rgb)
         function.draw_absolute_histogram(pixel_frequency_cum, rgb)
 
     if event == 'Histograma absoluto acumulado Working Copy':
         pixels = function.get_pixel_values(working_copy_filename)
         pixel_frequency = function.calculate_pixel_frequency(pixels)
-        pixel_frequency_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency, rgb)
+        pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency, rgb)
         function.draw_absolute_histogram(pixel_frequency_cum, rgb)
 
     if event == 'Ecualización del histograma':
         pixels_wc = function.get_pixel_values(working_copy_filename)
         pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
         # function.draw_absolute_histogram(pixel_frequency, rgb)
-        pixels_frequencies_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency_wc, rgb)
+        pixels_frequencies_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, rgb)
         table.colour_equalization(working_copy_filename, pixels_frequencies_cum, rgb)
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)
@@ -247,11 +247,11 @@ while True:
         pixels_si = function.get_pixel_values(working_copy_filename_si)
 
         pixel_frequency_si = function.calculate_pixel_frequency(pixels_si)
-        pixel_frequency_si_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency_si, rgb)
+        pixel_frequency_si_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_si, rgb)
         pixel_frequency_si_cum_norm = function.calculate_normalized_frequencies(pixel_frequency_si_cum, img_si.size)
 
         pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-        pixel_frequency_wc_cum = function.calculate_pixel_frequency_acumulative(pixel_frequency_wc, rgb)
+        pixel_frequency_wc_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, rgb)
         pixel_frequency_wc_cum_norm = function.calculate_normalized_frequencies(pixel_frequency_wc_cum, img_wc.size)
 
         table.color_specification(working_copy_filename, pixel_frequency_wc_cum_norm, pixel_frequency_si_cum_norm, rgb)

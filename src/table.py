@@ -1,4 +1,13 @@
-from tkinter import constants
+"""
+    University of La Laguna - Degree in Computer Engineering
+    Fourth grade - Computer vision
+    2021-2022
+
+    Authors:    Jorge Acevedo de León       -   alu0101123622@ull.edu.es
+                Nerea Rodríguez Hernández   -   alu0101215693@ull.edu.es
+    
+    File table.py: LUTs and functions where they are used are defined
+"""
 import PIL.Image
 import function
 import numpy as np
