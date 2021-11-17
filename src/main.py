@@ -23,12 +23,16 @@ new_size = int(600), int(600)
 filename = ""
 debug = 1
 roi = 0
+roi_wc = 0
 rgb = 0
 information_text = ''
+information_text_wc = ''
 roi_clicks = []
+roi_clicks_wc = []
 
 working_copy_filename = ''
 drawing_copy_filename = ''
+# drawing_copy_filename_wc = ''
 
 ## Method in charge of converting into bytes and the image will resize an image 
 ## if it is a file or an object of base64 bytes
@@ -60,14 +64,15 @@ menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']],
             ['Transformación', ['Escala de grises'],]]
 
-image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 10 bold')],
+image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 12 bold')],
               [sg.Image(key='-IMAGE-', visible = False, enable_events= True)],
-              [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 10 bold')],
-              [sg.Text(information_text ,background_color= "light green", key = '-MOUSE_POS-',  visible = False, relief= "raised", font='Arial 12 bold')]]
+              [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 13 bold')],
+              [sg.Text(information_text ,background_color= "light green", key = '-MOUSE_POS-',  visible = False, relief= "raised", font='Arial 14 bold')]]
             
-imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-',  visible = False, relief= "raised", font='Arial 10 bold')],
-              [sg.Image(key='-IMAGEWC-', visible = False )],
-              [sg.Text(information_text, background_color= "grey", key = '-INFO_TEXT_WC-', visible = False, relief= "raised", font='Arial 10 bold')]]
+imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-',  visible = False, relief= "raised", font='Arial 12 bold')],
+              [sg.Image(key='-IMAGEWC-', visible = False, enable_events= True )],
+              [sg.Text(information_text, background_color= "light blue", key = '-INFO_TEXT_WC-', visible = False, relief= "raised", font='Arial 13 bold')],
+              [sg.Text(information_text ,background_color= "light green", key = '-MOUSE_POS_WC-',  visible = False, relief= "raised", font='Arial 14 bold')]]
 
 ## ---------------- Full Layout  ---------------- ##
 layout = [[sg.Column(image_col, element_justification='c'),
@@ -81,7 +86,7 @@ window.Maximize()
 
 ## ---------------- Event loop ---------------- ##
 while True:
-    event, values = window.read(timeout=500)
+    event, values = window.read(timeout=150)
     if event in (sg.WIN_CLOSED, 'Exit'):
         break
     if event == sg.WIN_CLOSED or event == 'Exit':
@@ -91,6 +96,12 @@ while True:
     y_pos = window['-IMAGE-'].Widget.winfo_rooty()
     img_height = window['-IMAGE-'].Widget.winfo_height()
     img_width  = window['-IMAGE-'].Widget.winfo_width()
+
+    x_pos_wc = window['-IMAGEWC-'].Widget.winfo_rootx()
+    y_pos_wc = window['-IMAGEWC-'].Widget.winfo_rooty()
+    img_height_wc = window['-IMAGEWC-'].Widget.winfo_height()
+    img_width_wc  = window['-IMAGEWC-'].Widget.winfo_width()
+
 
     if event == 'Abrir':
         filename = sg.popup_get_file("Selecciona la imagen a cargar")
@@ -103,7 +114,7 @@ while True:
 
         working_copy_filename = utility.create_working_copy(filename)
         drawing_copy_filename = utility.create_drawing_copy(filename)
-
+        # drawing_copy_filename_wc = utility.create_drawing_copy_wc(filename)
         pixels = function.get_pixel_values(filename)
         pixel_frequency = function.calculate_pixel_frequency(pixels)
 
@@ -130,22 +141,27 @@ while True:
             window['-IMAGEWC-'].update(proccessed_image)
             window['-IMAGEWC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_SECTIONS_RGB")
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
 
             pixels_wc = function.get_pixel_values(working_copy_filename)
             pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
             information_text = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
-            window['-INFO_TEXT-'].update(information_text)
+            window['-INFO_TEXT_WC-'].update(information_text)
+            window['-INFO_TEXT_WC-'].update(visible = True)
+
         else:
             table.colour_by_sections(working_copy_filename, array_points, array_slopes)
             proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
             window['-IMAGEWC-'].update(proccessed_image)
             window['-IMAGEWC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_SECTIONS_B&W")
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
 
             pixels_wc = function.get_pixel_values(working_copy_filename)
             pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-            information_text = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
-            window['-INFO_TEXT-'].update(information_text)
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+            window['-INFO_TEXT_WC-'].update(information_text_wc)
+            window['-INFO_TEXT_WC-'].update(visible = True)
 
     if event == 'Escala de grises':
         table.colour_to_grayscale(working_copy_filename)
@@ -195,8 +211,10 @@ while True:
             window['-IMAGEWC-'].update(proccessed_image)
             window['-IMAGEWC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GAMMA_RGB")
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
             information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
             window['-INFO_TEXT_WC-'].update(information_text_wc)
+            window['-INFO_TEXT_WC-'].update(visible = True)
         else:
             gamma_value = sg.popup_get_text('Introduce el valor de correción gamma:')
             table.colour_to_gamma(working_copy_filename, gamma_value)
@@ -204,8 +222,10 @@ while True:
             window['-IMAGEWC-'].update(proccessed_image)
             window['-IMAGEWC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GAMMA_B&W")
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
             information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
             window['-INFO_TEXT_WC-'].update(information_text)
+            window['-INFO_TEXT_WC-'].update(visible = True)
 
     if event == 'Histograma absoluto Original':
         function.draw_absolute_histogram(pixel_frequency, rgb)
@@ -234,9 +254,11 @@ while True:
         window['-IMAGEWC-'].update(proccessed_image)
         window['-IMAGEWC-'].update(visible = True)
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_ECUALIZACION")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
         information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
         window['-INFO_TEXT_WC-'].update(information_text_wc)
-    
+        window['-INFO_TEXT_WC-'].update(visible = True)    
+
     if event == 'Especificación del histograma':
         img_wc = Image.open(working_copy_filename)
         si_filename = sg.popup_get_file("Selecciona la imagen a cargar")
@@ -260,9 +282,10 @@ while True:
         window['-IMAGEWC-'].update(proccessed_image)
         window['-IMAGEWC-'].update(visible = True)
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(si_filename + "_ESPECIFICACIÓN")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
         information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
         window['-INFO_TEXT_WC-'].update(information_text_wc)
-
+        window['-INFO_TEXT_WC-'].update(visible = True)
 
     if event == 'Diferencia entre dos imagenes':
         second_filename = sg.popup_get_file("Selecciona la segunda imagen a cargar")
@@ -279,6 +302,11 @@ while True:
         function.draw_image_difference(difference_filename, 30)
 
         proccessed_image = convert_to_bytes(si_filename, resize=new_size)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(si_filename + "_SEGUNDA_IMAGEN")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+        window['-INFO_TEXT_WC-'].update(information_text_wc)
+        window['-INFO_TEXT_WC-'].update(visible = True)
 
 ## Detection of click on image to create ROI
     if event == '-IMAGE-' :
@@ -310,20 +338,78 @@ while True:
             final_roi.save(working_copy_filename)
             proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
             window['-IMAGEWC-'].update(proccessed_image)
-            window['-IMAGEWC-'].update(visible = True)            
+            window['-IMAGEWC-'].update(visible = True) 
+            pixels_wc = function.get_pixel_values(working_copy_filename)
+            pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+            window['-INFO_TEXT_WC-'].update(information_text_wc)
+            window['-INFO_TEXT_WC-'].update(visible = True)
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_ROI")
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)           
             roi = 1
+
+    # if event == '-IMAGEWC-' :
+    #     print('s')
+    #     if (len(roi_clicks_wc) < 2):
+    #         roi_clicks_wc.append(input.cursor_image_pos_for_rectangle(x_pos_wc , y_pos_wc))
+    #     if (roi_wc):
+    #         roi_clicks_wc.clear()
+    #         drawing_copy_filename_wc = utility.create_drawing_copy_wc(drawing_copy_filename_wc)
+    #         wc_image_dc = utility.open_drawing_copy(drawing_copy_filename_wc)
+    #         wc_image_roi = convert_to_bytes(drawing_copy_filename_wc, resize=new_size)
+    #         window['-IMAGEWC-'].update(wc_image_roi)
+    #         roi_wc = 0
+    #     if (len(roi_clicks_wc) == 2):
+    #         wc_image_dc = utility.open_drawing_copy(drawing_copy_filename_wc)
+    #         draw = ImageDraw.Draw(wc_image_dc)
+    #         real_width, real_height  = utility.image_size(filename)
+    #         adapted_roi_clicks_wc = []
+    #         real_point_x = 0
+    #         real_point_y = 0
+    #         for point in roi_clicks_wc:
+    #             real_point_x = round(point[0] * real_width/img_width)
+    #             real_point_y = round(point[1] * real_height/img_height)
+    #             adapted_roi_clicks_wc.append((real_point_x, real_point_y))
+    #         draw.rectangle(adapted_roi_clicks_wc, width=1, outline='pink')
+    #         wc_image_dc.save(drawing_copy_filename_wc)
+    #         wc_image_roi = convert_to_bytes(drawing_copy_filename_wc, resize=new_size)
+    #         window['-IMAGEWC-'].update(wc_image_roi)
+    #         final_roi = utility.create_image_roi(adapted_roi_clicks_wc, working_copy_filename)
+    #         final_roi.save(working_copy_filename)
+    #         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+    #         window['-IMAGEWC-'].update(proccessed_image)
+    #         window['-IMAGEWC-'].update(visible = True)            
+    #         roi_wc = 1
+
+
 
 ## Instructions to be executed every 25 ms
     if (input.is_cursor_over_image(x_pos , y_pos, img_height, img_width)):
+        real_width, real_height  = utility.image_size(filename)
         window['-MOUSE_POS-'].update(visible = True)
-        window['-MOUSE_POS-'].update(input.cursor_image_pos(x_pos , y_pos))
+        img = Image.open(filename)
+        pixs = img.load()
+        point = input.cursor_image_pos(x_pos , y_pos)
+        real_point_x = round(point[0] * real_width/img_width)
+        real_point_y = round(point[1] * real_height/img_height)
+        window['-MOUSE_POS-'].update(str(input.cursor_image_pos(x_pos , y_pos)) + ' ' + str(pixs[real_point_x, real_point_y]))
     else:
         window['-MOUSE_POS-'].update(visible = False)
-        
-    if event == '-IMAGEWC-':
-        if (len(roi_clicks) < 2):
-            roi_clicks.append(input.cursor_image_pos_for_rectangle(x_pos , y_pos))
     
+    if(input.is_cursor_over_image(x_pos_wc , y_pos_wc, img_height_wc, img_width_wc)):
+        window['-MOUSE_POS_WC-'].update(visible = True)
+        real_width_wc, real_height_wc  = utility.image_size(working_copy_filename)
+        img_wc = Image.open(working_copy_filename)
+        pixs_wc = img_wc.load()
+        point_wc = input.cursor_image_pos(x_pos_wc , y_pos_wc)
+        real_point_x_wc = round(point_wc[0] * real_width_wc/img_width_wc)
+        real_point_y_wc = round(point_wc[1] * real_height_wc/img_height_wc)
+        window['-MOUSE_POS_WC-'].update(str(input.cursor_image_pos(x_pos_wc , y_pos_wc)) + ' ' + str(pixs_wc[real_point_x_wc, real_point_y_wc]))       
+    else:
+        window['-MOUSE_POS_WC-'].update(visible = False)
+
+
 os.remove(working_copy_filename)
 os.remove(drawing_copy_filename)
+# os.remove(drawing_copy_filename_wc)
 window.close()

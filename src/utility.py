@@ -50,6 +50,21 @@ def create_drawing_copy(filename):
     del img
     return drawing_copy_filename
 
+## Method responsible for making a drawing copy
+## for roi display
+def create_drawing_copy_wc(filename):
+    global working_copy_filename 
+    global drawing_copy_filename
+    global drawing_copy_filename_wc
+
+    img = PIL.Image.open(filename)
+    rgbimg = PIL.Image.new('RGB', img.size)
+    rgbimg.paste(img)
+    drawing_copy_filename_wc = os.path.splitext(filename)[0] + "_WCDC.tiff"
+    rgbimg.save(drawing_copy_filename_wc)
+    del img
+    return drawing_copy_filename_wc
+
 ## Method responsible for opening the drawing copy
 ## for roi display
 def open_drawing_copy(filename):

@@ -189,7 +189,8 @@ def entropy(size, pixel_frequency_normalized):
                     sum += (frequency * log2(frequency)) / 3
     else:
         for pixel_value, frequency in pixel_frequency_normalized.items():
-            sum += (frequency * log2(frequency))
+            if(frequency != 0):
+                sum += (frequency * log2(frequency))
     return -sum
 
 ## Max calculation method
