@@ -80,12 +80,19 @@ def make_sections_table(array_points, array_slopes):
     return color_array_aux
 
 ## LUT of equalization
-def make_equalization_table(pixels_frequencies_abs, size):
+def make_equalization_table_RGB(pixels_frequencies_abs, size):
     k_value = size / 256
     equalizationLUT = [
         [(max(0, round(pixels_frequencies_abs[0][r] / k_value) - 1)) for r in range(256)],
         [(max(0, round(pixels_frequencies_abs[1][g] / k_value) - 1)) for g in range(256)],
         [(max(0, round(pixels_frequencies_abs[2][b] / k_value) - 1)) for b in range(256)]
+    ]
+    return equalizationLUT
+
+def make_equalization_table_BW(pixels_frequencies_abs, size):
+    k_value = size / 256
+    equalizationLUT = [
+        [(max(0, round(pixels_frequencies_abs[0][r] / k_value) - 1)) for r in range(256)],
     ]
     return equalizationLUT
 
@@ -199,7 +206,30 @@ def colour_equalization(working_copy_filename, pixels_frequencies_abs, rgb):
     pixs = img.load()
     width, height = img.size
     size = width * height
-    equalizationLUT = make_equalization_table(pixels_frequencies_abs, size)
+    equalizationLUT = make_equalization_table_RGB(pixels_frequencies_abs, size)
+    if (rgb):
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                equalization_valueR = round(equalizationLUT[0][pixs[i,j][0]])
+                equalization_valueG = round(equalizationLUT[1][pixs[i,j][1]])
+                equalization_valueB = round(equalizationLUT[2][pixs[i,j][2]])
+                pixs[i,j] = (equalization_valueR, equalization_valueG, equalization_valueB)
+        img.save(working_copy_filename)
+        del img
+    else:
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                equalization_value = round(equalizationLUT[0][pixs[i,j][0]])
+                pixs[i,j] = (equalization_value, equalization_value, equalization_value)
+        img.save(working_copy_filename)
+        del img
+
+def colour_equalization_BW(working_copy_filename, pixels_frequencies_abs, rgb):
+    img = PIL.Image.open(working_copy_filename)
+    pixs = img.load()
+    width, height = img.size
+    size = width * height
+    equalizationLUT = make_equalization_table_BW(pixels_frequencies_abs, size)
     if (rgb):
         for i in range(img.size[0]):
             for j in range(img.size[1]):

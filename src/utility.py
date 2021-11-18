@@ -81,14 +81,14 @@ def save_as(saves_as_filename):
     del img
 
 ## Method responsible for displaying image information
-def info_imagen(filename, pixels):
+def info_imagen(filename, pixels, rgb):
     img = PIL.Image.open(filename)
     width, height = img.size
     brightness = function.brightness(img.size, pixels)
     contrast = function.contrast(img.size, brightness, pixels)
     max = function.max_value(pixels)
     min = function.min_value(pixels)
-    entropy = function.entropy(img.size, function.calculate_normalized_frequencies(pixels, img.size))
+    entropy = function.entropy(img.size, function.calculate_normalized_frequencies(pixels, img.size, rgb))
     return ('Height: %s | Width: %s | Brightness: %s | Contrast: %s |  Min: %s | Max: %s | Entropy: %s' % 
     (str(height), str(width), str(round(brightness, 3)), str(round(contrast, 3)), str(min), str(max), str(round(entropy, 3))))
 

@@ -70,7 +70,7 @@ def calculate_pixel_frequency(pixel_values):
         return grey_pix_freq_ord 
 
 ## Method that calculates the normalized histogram of the colors of the image
-def  calculate_normalized_frequencies(frequencies, size):
+def  calculate_normalized_frequencies(frequencies, size, rgb):
     width, height = size
     size = width * height
     if (len(frequencies) == 3):
@@ -78,33 +78,53 @@ def  calculate_normalized_frequencies(frequencies, size):
             for pixel_value, frequency in color.items():
                 color.update(OrderedDict.fromkeys([pixel_value], frequency / size))
     else:
-        for pixel_value, frequency in frequencies.items():
-                frequencies.update(OrderedDict.fromkeys([pixel_value], frequency / size))
+        if (rgb == 2):
+            for pixel_value, frequency in frequencies[0].items():
+                    frequencies[0].update(OrderedDict.fromkeys([pixel_value], frequency / size))
+        else:
+            for pixel_value, frequency in frequencies.items():
+                    frequencies.update(OrderedDict.fromkeys([pixel_value], frequency / size))
     return frequencies    
 
 ## Method that calculates the cumulative histogram of the colors of the image
 def calculate_pixel_frequency_cumulative(pixel_frequency, rgb):
-    pixel_frequency_acumulativeA = dict(pixel_frequency[0])
-    pixel_frequency_acumulativeB = dict(pixel_frequency[1])
-    pixel_frequency_acumulativeC = dict(pixel_frequency[2])
-    pixel_frequency_acumulative = [pixel_frequency_acumulativeA, pixel_frequency_acumulativeB, pixel_frequency_acumulativeC]
-    sum1 = 0
-    for pixel_value, frequency in pixel_frequency_acumulative[0].items():
-        sum1 += frequency
-        pixel_frequency_acumulative[0].update(OrderedDict.fromkeys([pixel_value], sum1))
-    sum2 = 0
-    for pixel_value, frequency in pixel_frequency_acumulative[1].items():
-        sum2 += frequency
-        pixel_frequency_acumulative[1].update(OrderedDict.fromkeys([pixel_value], sum2))
-    sum3 = 0
-    for pixel_value, frequency in pixel_frequency_acumulative[2].items():
-        sum3 += frequency
-        pixel_frequency_acumulative[2].update(OrderedDict.fromkeys([pixel_value], sum3))
-    return pixel_frequency_acumulative
+    if(rgb == 1):
+        pixel_frequency_acumulativeA = dict(pixel_frequency[0])
+        pixel_frequency_acumulativeB = dict(pixel_frequency[1])
+        pixel_frequency_acumulativeC = dict(pixel_frequency[2])
+        pixel_frequency_acumulative = [pixel_frequency_acumulativeA, pixel_frequency_acumulativeB, pixel_frequency_acumulativeC]
+        sum1 = 0
+        for pixel_value, frequency in pixel_frequency_acumulative[0].items():
+            sum1 += frequency
+            pixel_frequency_acumulative[0].update(OrderedDict.fromkeys([pixel_value], sum1))
+        sum2 = 0
+        for pixel_value, frequency in pixel_frequency_acumulative[1].items():
+            sum2 += frequency
+            pixel_frequency_acumulative[1].update(OrderedDict.fromkeys([pixel_value], sum2))
+        sum3 = 0
+        for pixel_value, frequency in pixel_frequency_acumulative[2].items():
+            sum3 += frequency
+            pixel_frequency_acumulative[2].update(OrderedDict.fromkeys([pixel_value], sum3))
+        return pixel_frequency_acumulative
+    if(rgb == 2):
+        pixel_frequency_acumulativeA = dict(pixel_frequency[0])
+        pixel_frequency_acumulative = [pixel_frequency_acumulativeA]
+        sum1 = 0
+        for pixel_value, frequency in pixel_frequency_acumulative[0].items():
+            sum1 += frequency
+            pixel_frequency_acumulative[0].update(OrderedDict.fromkeys([pixel_value], sum1))
+        return pixel_frequency_acumulative        
+    else:
+        pixel_frequency_acumulative = dict(pixel_frequency)
+        sum = 0
+        for pixel_value, frequency in pixel_frequency_acumulative.items():
+            sum += frequency
+            pixel_frequency_acumulative.update(OrderedDict.fromkeys([pixel_value], sum))
+        return pixel_frequency_acumulative        
     
 ##  Method for creating the histogram of absolute values
 def draw_absolute_histogram(pixel_frequency, rgb):
-    if (rgb):
+    if (rgb == 1):
         # RED
         keys = pixel_frequency[0].keys()
         values = pixel_frequency[0].values()
@@ -130,7 +150,7 @@ def draw_absolute_histogram(pixel_frequency, rgb):
         plt.title("Histograma de valores absolutos")
         plt.show()              
     else:
-        if(len(pixel_frequency) == 3):
+        if((len(pixel_frequency) == 3) or (rgb == 2)):
             keys = pixel_frequency[0].keys()
             values = pixel_frequency[0].values()
             plt.bar(keys, values, color='black', width=1.0)

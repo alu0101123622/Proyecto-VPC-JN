@@ -59,10 +59,9 @@ def convert_to_bytes(file_or_bytes, resize=None):
 sg.theme('GreenMono')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Información', ['Imprimir datos', 'Histogramas', ['Histograma absoluto Original', 'Histograma absoluto Working Copy', 'Histograma absoluto acumulado Original', 'Histograma absoluto acumulado Working Copy']],],
-            ['Herramientas', ['Región de interés']],
-            ['Operaciones Lineales', ['Transformaciones lineales por tramos', 'Ajuste lineal del brillo y contraste']],
-            ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']],
-            ['Transformación', ['Escala de grises'],]]
+            ['Operaciones Lineales', ['Transformaciones lineales por tramos', 'Ajuste lineal del brillo y contraste', 'Escala de grises']],
+            ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']]
+            ]
 
 image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 12 bold')],
               [sg.Image(key='-IMAGE-', visible = False, enable_events= True)],
@@ -118,7 +117,7 @@ while True:
         pixels = function.get_pixel_values(filename)
         pixel_frequency = function.calculate_pixel_frequency(pixels)
 
-        information_text = utility.info_imagen(filename, pixel_frequency)
+        information_text = utility.info_imagen(filename, pixel_frequency, rgb)
         window['-INFO_TEXT-'].update(information_text)
         window['-INFO_TEXT-'].update(visible = True)
 
@@ -145,7 +144,7 @@ while True:
 
             pixels_wc = function.get_pixel_values(working_copy_filename)
             pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-            information_text = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+            information_text = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
             window['-INFO_TEXT_WC-'].update(information_text)
             window['-INFO_TEXT_WC-'].update(visible = True)
 
@@ -159,7 +158,7 @@ while True:
 
             pixels_wc = function.get_pixel_values(working_copy_filename)
             pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
             window['-INFO_TEXT_WC-'].update(information_text_wc)
             window['-INFO_TEXT_WC-'].update(visible = True)
 
@@ -173,7 +172,7 @@ while True:
 
         pixels_wc = function.get_pixel_values(working_copy_filename)    
         pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
         window['-INFO_TEXT_WC-'].update(information_text_wc)
         window['-INFO_TEXT_WC-'].update(visible = True)
 
@@ -194,7 +193,7 @@ while True:
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_linearlfit")
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
 
-        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
         window['-INFO_TEXT_WC-'].update(information_text_wc)
         window['-INFO_TEXT_WC-'].update(visible = True)
     
@@ -212,7 +211,7 @@ while True:
             window['-IMAGEWC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GAMMA_RGB")
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
-            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
             window['-INFO_TEXT_WC-'].update(information_text_wc)
             window['-INFO_TEXT_WC-'].update(visible = True)
         else:
@@ -223,39 +222,55 @@ while True:
             window['-IMAGEWC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GAMMA_B&W")
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
-            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
             window['-INFO_TEXT_WC-'].update(information_text)
             window['-INFO_TEXT_WC-'].update(visible = True)
 
     if event == 'Histograma absoluto Original':
+        pixels = function.get_pixel_values(filename)
+        pixel_frequency = function.calculate_pixel_frequency(pixels)
         function.draw_absolute_histogram(pixel_frequency, rgb)
 
     if event == 'Histograma absoluto Working Copy':
-        function.draw_absolute_histogram(pixel_frequency, rgb)
+        pixels_wc = function.get_pixel_values(working_copy_filename)
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        function.draw_absolute_histogram(pixel_frequency_wc, rgb)
     
     if event == 'Histograma absoluto acumulado Original':
+        pixels = function.get_pixel_values(filename)
+        pixel_frequency = function.calculate_pixel_frequency(pixels)
         pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency, rgb)
         function.draw_absolute_histogram(pixel_frequency_cum, rgb)
 
     if event == 'Histograma absoluto acumulado Working Copy':
-        pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency, rgb)
-        function.draw_absolute_histogram(pixel_frequency_cum, rgb)
+        pixels_wc = function.get_pixel_values(working_copy_filename)
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        if(rgb == 0):
+            pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, 2)
+        else:
+            pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, rgb)
+        if(rgb == 0):
+            function.draw_absolute_histogram(pixel_frequency_cum, 2)
+        else:
+            function.draw_absolute_histogram(pixel_frequency_cum, rgb)
 
     if event == 'Ecualización del histograma':
         pixels_wc = function.get_pixel_values(working_copy_filename)
         pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-
         function.draw_absolute_histogram(pixel_frequency, rgb)
-        pixels_frequencies_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, rgb)
-
-        table.colour_equalization(working_copy_filename, pixels_frequencies_cum, rgb)
+        if(rgb == 0):
+            pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, 2)
+            table.colour_equalization_BW(working_copy_filename, pixel_frequency_cum, rgb)
+        else:
+            pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, rgb)
+            table.colour_equalization(working_copy_filename, pixel_frequency_cum, rgb)
 
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)
         window['-IMAGEWC-'].update(visible = True)
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_ECUALIZACION")
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
-        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
         window['-INFO_TEXT_WC-'].update(information_text_wc)
         window['-INFO_TEXT_WC-'].update(visible = True)    
 
@@ -267,14 +282,23 @@ while True:
 
         pixels_wc = function.get_pixel_values(working_copy_filename)
         pixels_si = function.get_pixel_values(working_copy_filename_si)
+        
+        if(rgb == 0):
+            pixel_frequency_si = function.calculate_pixel_frequency(pixels_si)
+            pixel_frequency_si_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_si, 2)
+            pixel_frequency_si_cum_norm = function.calculate_normalized_frequencies(pixel_frequency_si_cum, img_si.size, 2)
 
-        pixel_frequency_si = function.calculate_pixel_frequency(pixels_si)
-        pixel_frequency_si_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_si, rgb)
-        pixel_frequency_si_cum_norm = function.calculate_normalized_frequencies(pixel_frequency_si_cum, img_si.size)
+            pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+            pixel_frequency_wc_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, 2)
+            pixel_frequency_wc_cum_norm = function.calculate_normalized_frequencies(pixel_frequency_wc_cum, img_wc.size, 2)
+        else:
+            pixel_frequency_si = function.calculate_pixel_frequency(pixels_si)
+            pixel_frequency_si_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_si, rgb)
+            pixel_frequency_si_cum_norm = function.calculate_normalized_frequencies(pixel_frequency_si_cum, img_si.size, rgb)
 
-        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-        pixel_frequency_wc_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, rgb)
-        pixel_frequency_wc_cum_norm = function.calculate_normalized_frequencies(pixel_frequency_wc_cum, img_wc.size)
+            pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+            pixel_frequency_wc_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, rgb)
+            pixel_frequency_wc_cum_norm = function.calculate_normalized_frequencies(pixel_frequency_wc_cum, img_wc.size, rgb)
 
         table.color_specification(working_copy_filename, pixel_frequency_wc_cum_norm, pixel_frequency_si_cum_norm, rgb)
 
@@ -283,7 +307,7 @@ while True:
         window['-IMAGEWC-'].update(visible = True)
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(si_filename + "_ESPECIFICACIÓN")
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
-        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc , rgb)
         window['-INFO_TEXT_WC-'].update(information_text_wc)
         window['-INFO_TEXT_WC-'].update(visible = True)
 
@@ -299,11 +323,12 @@ while True:
         pixel_frequency_difference = function.calculate_pixel_frequency(pixels_difference)
 
         function.draw_absolute_histogram(pixel_frequency_difference, rgb)
-        function.draw_image_difference(difference_filename, 30)
+        umbral = int(sg.popup_get_text("Selecciona el umbral:"))
+        function.draw_image_difference(difference_filename, umbral)
 
-        proccessed_image = convert_to_bytes(si_filename, resize=new_size)
-        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
-        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(si_filename + "_SEGUNDA_IMAGEN")
+        proccessed_image = convert_to_bytes(second_filename, resize=new_size)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_difference,rgb)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(second_filename + "_SEGUNDA_IMAGEN")
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
         window['-INFO_TEXT_WC-'].update(information_text_wc)
         window['-INFO_TEXT_WC-'].update(visible = True)
@@ -341,7 +366,7 @@ while True:
             window['-IMAGEWC-'].update(visible = True) 
             pixels_wc = function.get_pixel_values(working_copy_filename)
             pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc)
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
             window['-INFO_TEXT_WC-'].update(information_text_wc)
             window['-INFO_TEXT_WC-'].update(visible = True)
             window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_ROI")
