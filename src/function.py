@@ -256,6 +256,7 @@ def image_difference(filename, second_filename):
             result_pixels[i,j] = tuple(map(lambda i, j: abs(i - j), first_pixels[i,j], second_pixels[i,j]))
     difference_filename = os.path.splitext(filename)[0] + "_diff.tiff"
     result_image.save(difference_filename)
+    result_image.show()
     return difference_filename       
 
 ## Image difference draw method

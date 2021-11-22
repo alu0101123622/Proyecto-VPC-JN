@@ -58,19 +58,19 @@ def convert_to_bytes(file_or_bytes, resize=None):
 ## ---------------- Definition of Layout ---------------- ##
 sg.theme('GreenMono')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
-            ['Información', ['Imprimir datos', 'Histogramas', ['Histograma absoluto Original', 'Histograma absoluto Working Copy', 'Histograma absoluto acumulado Original', 'Histograma absoluto acumulado Working Copy']],],
+            ['Información', ['Histogramas', ['Histograma absoluto Original', 'Histograma absoluto Working Copy', 'Histograma absoluto acumulado Original', 'Histograma absoluto acumulado Working Copy']],],
             ['Operaciones Lineales', ['Transformaciones lineales por tramos', 'Ajuste lineal del brillo y contraste', 'Escala de grises']],
             ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']]
             ]
 
 image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 12 bold')],
               [sg.Image(key='-IMAGE-', visible = False, enable_events= True)],
-              [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 13 bold')],
+              [sg.Text(information_text ,background_color= "light blue", key = '-INFO_TEXT-',  visible = False, relief= "raised", font='Arial 10 bold')],
               [sg.Text(information_text ,background_color= "light green", key = '-MOUSE_POS-',  visible = False, relief= "raised", font='Arial 14 bold')]]
             
 imagewc_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN_RESULTANTE-',  visible = False, relief= "raised", font='Arial 12 bold')],
               [sg.Image(key='-IMAGEWC-', visible = False, enable_events= True )],
-              [sg.Text(information_text, background_color= "light blue", key = '-INFO_TEXT_WC-', visible = False, relief= "raised", font='Arial 13 bold')],
+              [sg.Text(information_text, background_color= "light blue", key = '-INFO_TEXT_WC-', visible = False, relief= "raised", font='Arial 10 bold')],
               [sg.Text(information_text ,background_color= "light green", key = '-MOUSE_POS_WC-',  visible = False, relief= "raised", font='Arial 14 bold')]]
 
 ## ---------------- Full Layout  ---------------- ##
@@ -261,9 +261,15 @@ while True:
         if(rgb == 0):
             pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, 2)
             table.colour_equalization_BW(working_copy_filename, pixel_frequency_cum, rgb)
+            pixels_wc = function.get_pixel_values(working_copy_filename)
+            pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+            function.draw_absolute_histogram(pixel_frequency, rgb)
         else:
             pixel_frequency_cum = function.calculate_pixel_frequency_cumulative(pixel_frequency_wc, rgb)
             table.colour_equalization(working_copy_filename, pixel_frequency_cum, rgb)
+            pixels_wc = function.get_pixel_values(working_copy_filename)
+            pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+            function.draw_absolute_histogram(pixel_frequency, rgb)
 
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)
@@ -307,8 +313,8 @@ while True:
         window['-IMAGEWC-'].update(visible = True)
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(si_filename + "_ESPECIFICACIÓN")
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
-        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc , rgb)
-        window['-INFO_TEXT_WC-'].update(information_text_wc)
+        information_text_si = utility.info_imagen(si_filename, pixel_frequency_si , rgb)
+        window['-INFO_TEXT_WC-'].update(information_text_si)
         window['-INFO_TEXT_WC-'].update(visible = True)
 
     if event == 'Diferencia entre dos imagenes':
