@@ -89,8 +89,8 @@ def info_imagen(filename, pixels, rgb):
     max = function.max_value(pixels)
     min = function.min_value(pixels)
     entropy = function.entropy(img.size, function.calculate_normalized_frequencies(pixels, img.size, rgb))
-    return ('Height: %s | Width: %s | Brightness: %s | Contrast: %s |  Min: %s | Max: %s | Entropy: %s' % 
-    (str(height), str(width), str(round(brightness, 3)), str(round(contrast, 3)), str(min), str(max), str(round(entropy, 3))))
+    return ('Height: %s | Width: %s | Brightness: %s | Contrast: %s \n\t Min: %s | Max: %s | Entropy: %s' % 
+    (str(height), str(width), str(brightness), str(contrast), str(min), str(max), str(entropy)))
 
 ## Method in charge of calculating the size of the image
 def image_size(filename):

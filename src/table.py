@@ -31,10 +31,8 @@ def make_linearfit_table(brightness, contrast, new_brightness, new_contrast):
         A = 1
     else:
         A = new_contrast / constants
-    if (brightness == new_brightness):
-        B = new_brightness - A * brightness
-    else:
-        B = new_brightness - A * brightness
+    B = new_brightness - A * brightness
+    
     linearfitLUT = [
         [(r * A + B) for r in range(256)],
         [(g * A + B) for g in range(256)],

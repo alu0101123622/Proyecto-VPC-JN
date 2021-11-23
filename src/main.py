@@ -178,6 +178,8 @@ while True:
 
     if event == 'Ajuste lineal del brillo y contraste':
         img = Image.open(working_copy_filename)
+        pixels = function.get_pixel_values(working_copy_filename)    
+        pixel_frequency = function.calculate_pixel_frequency(pixels)
         brightness = function.brightness(img.size, pixel_frequency)
         contrast = function.contrast(img.size, brightness, pixel_frequency)
         new_brigthness = sg.popup_get_text('Introduce el brillo:')

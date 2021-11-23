@@ -170,76 +170,101 @@ def draw_absolute_histogram(pixel_frequency, rgb):
 ## Brightness calculation method
 def brightness(size, pixel_frequency):
     sum = 0
+    sumRGB = []
+
     width, height = size
     size = width * height
     if (len(pixel_frequency) == 3):
-        for color in pixel_frequency:
-            for pixel_value, frequency in color.items():
-                sum += (frequency * pixel_value) / 3
+        for color in range(3):
+            for pixel_value, frequency in pixel_frequency[color].items():
+                sum += (frequency * pixel_value)
+            sumRGB.append(round(sum / size, 3))
+            sum = 0
+        bright = sumRGB
     else:
         for pixel_value, frequency in pixel_frequency.items():
             sum += (frequency * pixel_value) 
-    bright = sum / (size)
+        sumRGB.append(round(sum / size, 3))
+        bright = sumRGB
     return bright
 
 ## Contrast calculation method
 def contrast(size, brightness, pixel_frequency):
     sum = 0
+    sumRGB = []
     width, height = size
     size = width * height
     if (len(pixel_frequency) == 3):
-        for color in pixel_frequency:
-            for pixel_value, frequency in color.items():
-                sum += (frequency * pow(pixel_value - brightness, 2)) / 3
-    else: 
+        for color in range(3):
+            for pixel_value, frequency in pixel_frequency[color].items():
+                sum += (frequency * pow(pixel_value - brightness[color], 2))
+            sumRGB.append(round(sqrt(sum / size), 3))
+            sum = 0
+        contrast = sumRGB
+    else:
         for pixel_value, frequency in pixel_frequency.items():
-            sum += (frequency * pow(pixel_value - brightness, 2))
-    contrast = sqrt(sum / size)
+            sum += (frequency * pow(pixel_value - brightness[0], 2))
+        sumRGB.append(round(sqrt(sum / size), 3))
+        contrast = sumRGB
     return contrast
 
 ## Entropy calculation method
 def entropy(size, pixel_frequency_normalized):
     sum = 0
+    sumRGB = []
     width, height = size
     size = width * height
     if (len(pixel_frequency_normalized) == 3):
         for color in pixel_frequency_normalized:
             for pixel_value, frequency in color.items():
                 if(frequency != 0):
-                    sum += (frequency * log2(frequency)) / 3
+                    sum += (frequency * log2(frequency))
+            sumRGB.append(-round(sum, 3))
     else:
         for pixel_value, frequency in pixel_frequency_normalized.items():
             if(frequency != 0):
                 sum += (frequency * log2(frequency))
-    return -sum
+        sumRGB.append(-round(sum, 3))
+    return sumRGB
+
 
 ## Max calculation method
 def max_value(pixel_frequency):
     max = -1
+    maxRGB = []
     if (len(pixel_frequency) == 3):
         for color in pixel_frequency:
             for pixel_value, frequency in color.items():
-                if (pixel_value > max):
+                if ((pixel_value > max) and (frequency != 0)):
                     max = pixel_value
+            maxRGB.append(max)
+            max = -1
     else:
         for pixel_value, frequency in pixel_frequency.items():
-            if (pixel_value > max):
-                    max = pixel_value
-    return max
+            if ((pixel_value > max) and (frequency != 0)):
+                max = pixel_value
+        maxRGB.append(max)
+        max = -1
+    return maxRGB
 
 ## Min calculation method
 def min_value(pixel_frequency):
     min = Infinity
+    minRGB = []
     if (len(pixel_frequency) == 3):
         for color in pixel_frequency:
             for pixel_value, frequency in color.items():
-                if (pixel_value < min):
+                if ((pixel_value < min) and (frequency != 0)):
                     min = pixel_value
+            minRGB.append(min)
+            min = Infinity
     else:
         for pixel_value, frequency in pixel_frequency.items():
-            if (pixel_value < min):
-                    min = pixel_value
-    return min
+            if ((pixel_value < min) and (frequency != 0)):
+                min = pixel_value
+        minRGB.append(min)
+        min = Infinity
+    return minRGB
 
 ## Image difference calculation method
 def image_difference(filename, second_filename):
