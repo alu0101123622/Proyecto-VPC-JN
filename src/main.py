@@ -8,6 +8,7 @@
     
     File main.py: Main program file
 """
+from tkinter import wantobjects
 import PySimpleGUI as sg
 import os.path
 from PIL import Image, ImageDraw
@@ -182,22 +183,47 @@ while True:
         pixel_frequency = function.calculate_pixel_frequency(pixels)
         brightness = function.brightness(img.size, pixel_frequency)
         contrast = function.contrast(img.size, brightness, pixel_frequency)
-        new_brigthness = sg.popup_get_text('Introduce el brillo:')
-        new_contrast = sg.popup_get_text('Introduce el contrate:')
-        table.colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigthness, new_contrast)
 
-        pixels_wc = function.get_pixel_values(working_copy_filename)
-        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        if(brightness[0]!=brightness[1]):
+            new_brigthness = []
+            new_contrast = []
+            for color in range(3):
+                nb = sg.popup_get_text('Introduce el brillo:')
+                new_brigthness.append(nb)
+            for color in range(3):
+                nc = sg.popup_get_text('Introduce el contrate:')
+                new_contrast.append(nc)
 
-        window['-IMAGEWC-'].update(proccessed_image)
-        window['-IMAGEWC-'].update(visible = True)
-        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_linearlfit")
-        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+            table.colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigthness, new_contrast)
+            pixels_wc = function.get_pixel_values(working_copy_filename)
+            pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+            proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
 
-        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
-        window['-INFO_TEXT_WC-'].update(information_text_wc)
-        window['-INFO_TEXT_WC-'].update(visible = True)
+            window['-IMAGEWC-'].update(proccessed_image)
+            window['-IMAGEWC-'].update(visible = True)
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_linearlfit")
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+            window['-INFO_TEXT_WC-'].update(information_text_wc)
+            window['-INFO_TEXT_WC-'].update(visible = True)
+        else:
+            new_brigthness = sg.popup_get_text('Introduce el brillo:')
+            new_contrast = sg.popup_get_text('Introduce el contrate:')
+            table.colour_to_linearlfit(working_copy_filename, brightness, contrast, new_brigthness, new_contrast)
+
+            pixels_wc = function.get_pixel_values(working_copy_filename)
+            pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+            proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+
+            window['-IMAGEWC-'].update(proccessed_image)
+            window['-IMAGEWC-'].update(visible = True)
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_linearlfit")
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+            window['-INFO_TEXT_WC-'].update(information_text_wc)
+            window['-INFO_TEXT_WC-'].update(visible = True)
     
     if event == 'Correción Gamma':
         img = Image.open(working_copy_filename)

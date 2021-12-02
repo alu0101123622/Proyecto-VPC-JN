@@ -303,3 +303,12 @@ def find_closest_index(original_accumulative_freq_value, pixel_frequency_si_cum)
         else:
             return desired_index
     return desired_index
+
+def find_closest_index_RGB(original_accumulative_freq_value, pixel_frequency_si_cum, item):
+    desired_index = 0
+    for i in range(256):
+        if(pixel_frequency_si_cum[item][i] <= original_accumulative_freq_value):
+            desired_index = i
+        else:
+            return desired_index
+    return desired_index
