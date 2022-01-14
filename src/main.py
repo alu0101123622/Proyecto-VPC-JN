@@ -61,7 +61,10 @@ sg.theme('GreenMono')
 menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Información', ['Histogramas', ['Histograma absoluto Original', 'Histograma absoluto Working Copy', 'Histograma absoluto acumulado Original', 'Histograma absoluto acumulado Working Copy']],],
             ['Operaciones Lineales', ['Transformaciones lineales por tramos', 'Ajuste lineal del brillo y contraste', 'Escala de grises']],
-            ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']]
+            ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']],
+            ['Operaciones Geométricas', ['Espejo vertical', 'Espejo horizontal', 'Traspuesta de una imagen', 'Rotaciones múltiplo de 90º']],
+            ['Transformación de Escalado'],
+            ['Transformación de Rotación']
             ]
 
 image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 12 bold')],
@@ -83,6 +86,26 @@ layout = [[sg.Column(image_col, element_justification='c'),
 ##---------------- Window creation ---------------- ##
 window = sg.Window('Multiple Format Image Viewer', layout, resizable=True).Finalize()
 window.Maximize()
+
+filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std.tif'
+rgb = utility.is_rgb(filename)
+proccessed_image = convert_to_bytes(filename, resize=new_size)
+window['-IMAGE-'].update(proccessed_image)
+window['-NOMBRE_IMAGEN-'].update(filename)
+window['-NOMBRE_IMAGEN-'].update(visible= True)
+window['-IMAGE-'].update(visible = True)
+
+working_copy_filename = utility.create_working_copy(filename)
+drawing_copy_filename = utility.create_drawing_copy(filename)
+# drawing_copy_filename_wc = utility.create_drawing_copy_wc(filename)
+pixels = function.get_pixel_values(filename)
+pixel_frequency = function.calculate_pixel_frequency(pixels)
+
+information_text = utility.info_imagen(filename, pixel_frequency, rgb)
+window['-INFO_TEXT-'].update(information_text)
+window['-INFO_TEXT-'].update(visible = True)
+
+
 
 ## ---------------- Event loop ---------------- ##
 while True:
@@ -366,6 +389,71 @@ while True:
         window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
         window['-INFO_TEXT_WC-'].update(information_text_wc)
         window['-INFO_TEXT_WC-'].update(visible = True)
+
+#############################################################################################
+#############################################################################################
+#############################################################################################
+
+    if event == 'Espejo horizontal':
+        table.horizontal_mirror(working_copy_filename)
+        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+
+        pixels_wc = function.get_pixel_values(working_copy_filename)    
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+        window['-INFO_TEXT_WC-'].update(information_text_wc)
+        window['-INFO_TEXT_WC-'].update(visible = True)
+
+    if event == 'Espejo vertical':
+        table.vertical_mirror(working_copy_filename)
+        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+
+        pixels_wc = function.get_pixel_values(working_copy_filename)    
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+        window['-INFO_TEXT_WC-'].update(information_text_wc)
+        window['-INFO_TEXT_WC-'].update(visible = True) 
+    
+    if event == 'Traspuesta de una imagen':
+        table.trasp_mirror(working_copy_filename)
+        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+
+        pixels_wc = function.get_pixel_values(working_copy_filename)    
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+        window['-INFO_TEXT_WC-'].update(information_text_wc)
+        window['-INFO_TEXT_WC-'].update(visible = True)
+
+    if event == 'Rotaciones múltiplo de 90º':
+        table.rotate(working_copy_filename)
+        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+
+        pixels_wc = function.get_pixel_values(working_copy_filename)    
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+        window['-INFO_TEXT_WC-'].update(information_text_wc)
+        window['-INFO_TEXT_WC-'].update(visible = True)  
+
+#############################################################################################
+#############################################################################################
+#############################################################################################
+
 
 ## Detection of click on image to create ROI
     if event == '-IMAGE-' :

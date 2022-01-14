@@ -151,6 +151,10 @@ def make_specification_table_RGB(pixel_frequency_wc_cum, pixel_frequency_si_cum)
         specificationLUT[2][color] = g4
     return specificationLUT   
 
+#############################################################################################
+#############################################################################################
+#############################################################################################
+
 ## Method in charge of performing the image transformation
 ## to a grayscale image
 def colour_to_grayscale(working_copy_filename):
@@ -317,4 +321,57 @@ def color_specification(working_copy_filename, pixel_frequency_wc_cum, pixel_fre
         img.show()
         del img
 
+#############################################################################################
+#############################################################################################
+#############################################################################################
 
+## Method in charge of performing the image transformation
+## to a grayscale image
+def horizontal_mirror(working_copy_filename):
+    img = PIL.Image.open(working_copy_filename)
+    result_img = PIL.Image.open(working_copy_filename)
+    pixs = img.load()
+    result_pixs = result_img.load()
+    print(img.size)
+    for i in range(img.size[0]):
+        for j in range(img.size[1]):
+            result_pixs[i,  (img.size[1] - 1) - j] = pixs[i, j]
+    result_img.save(working_copy_filename)
+    del img
+
+def vertical_mirror(working_copy_filename):
+    img = PIL.Image.open(working_copy_filename)
+    result_img = PIL.Image.open(working_copy_filename)
+    pixs = img.load()
+    result_pixs = result_img.load()
+    print(img.size)
+    for i in range(img.size[0]):
+        for j in range(img.size[1]):
+            result_pixs[(img.size[0] - 1) - i, j] = pixs[i, j]
+    result_img.save(working_copy_filename)
+    del img
+
+def trasp_mirror(working_copy_filename):
+    img = PIL.Image.open(working_copy_filename)
+    result_img = PIL.Image.open(working_copy_filename)
+    pixs = img.load()
+    result_pixs = result_img.load()
+    print(img.size)
+    for i in range(img.size[0]):
+        for j in range(img.size[1]):
+            result_pixs[j, i] = pixs[i, j]
+    result_img.save(working_copy_filename)
+    del img
+
+def rotate(working_copy_filename):
+    img = PIL.Image.open(working_copy_filename)
+    result_img = PIL.Image.open(working_copy_filename)
+    result_img.resize([img.height, img.width])
+    pixs = img.load()
+    result_pixs = result_img.load()
+    print(img.size)
+    for i in range(img.size[0]):
+        for j in range(img.size[1]):
+            result_pixs[j, (img.size[1] - 1) - i] = pixs[i, j]
+    result_img.save(working_copy_filename)
+    del img
