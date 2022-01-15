@@ -8,6 +8,7 @@
     
     File table.py: LUTs and functions where they are used are defined
 """
+from re import X
 import PIL.Image
 import function
 import numpy as np
@@ -353,7 +354,8 @@ def vertical_mirror(working_copy_filename):
 
 def trasp_mirror(working_copy_filename):
     img = PIL.Image.open(working_copy_filename)
-    result_img = PIL.Image.open(working_copy_filename)
+    new_height,new_width = img.size
+    result_img = PIL.Image.new(mode="RGB", size=(new_width, new_height))
     pixs = img.load()
     result_pixs = result_img.load()
     for i in range(img.size[0]):
@@ -373,8 +375,8 @@ def rotate(working_copy_filename, rotation_angle):
             rotation_times = 1
     for times in range(rotation_times):
         img = PIL.Image.open(working_copy_filename)
-        result_img = PIL.Image.open(working_copy_filename)
-        result_img.resize([img.height, img.width])
+        new_height,new_width = img.size
+        result_img = PIL.Image.new(mode="RGB", size=(new_width, new_height))
         pixs = img.load()
         result_pixs = result_img.load()
         for i in range(img.size[0]):
@@ -382,3 +384,23 @@ def rotate(working_copy_filename, rotation_angle):
                 result_pixs[(img.size[1] - 1) - j, i] = pixs[i, j]
         result_img.save(working_copy_filename)
     del img
+
+
+def scale(working_copy_filename, new_width, new_height):
+    new_width, new_height = int(new_width), int(new_height)
+    img = PIL.Image.open(working_copy_filename)
+    result_img = PIL.Image.new(mode="RGB",size=(new_width, new_height))
+    pixs = img.load()
+    result_pixs = result_img.load()
+    original_width, original_height = img.size
+    width_correlation = new_width / original_width
+    height_correlation = new_height / original_height
+    print(result_img.size)
+    for i in range(result_img.size[0]):
+        for j in range(result_img.size[1]):
+            x_pos_translation = i / width_correlation
+            y_pos_translation = j / height_correlation
+            # print([i, j, int(np.floor(x_pos_translation)), int(np.floor(y_pos_translation))])
+            result_pixs[i,j] = pixs[int(np.floor(x_pos_translation)), int(np.floor(y_pos_translation))]
+    result_img.save(working_copy_filename)
+    del img    

@@ -63,8 +63,8 @@ menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Operaciones Lineales', ['Transformaciones lineales por tramos', 'Ajuste lineal del brillo y contraste', 'Escala de grises']],
             ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']],
             ['Operaciones Geométricas', ['Espejo vertical', 'Espejo horizontal', 'Traspuesta de una imagen', 'Rotaciones múltiplo de 90º']],
-            ['Transformación de Escalado'],
-            ['Transformación de Rotación']
+            ['Transformaciones', ['Transformación de Escalado', 'Transformación de rotación']]
+
             ]
 
 image_col = [[sg.Text(size=(None,None), key='-NOMBRE_IMAGEN-', visible = False, relief= "raised", font='Arial 12 bold')],
@@ -92,7 +92,7 @@ window = sg.Window('Multiple Format Image Viewer', layout, resizable=True).Final
 rotate_window = sg.Window('Selección de rotación', rotate_layout, resizable=True).Finalize()
 window.Maximize()
 
-filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std.tif'
+filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std_WC_WC.tiff'
 rgb = utility.is_rgb(filename)
 proccessed_image = convert_to_bytes(filename, resize=new_size)
 window['-IMAGE-'].update(proccessed_image)
@@ -110,7 +110,15 @@ information_text = utility.info_imagen(filename, pixel_frequency, rgb)
 window['-INFO_TEXT-'].update(information_text)
 window['-INFO_TEXT-'].update(visible = True)
 
-
+window['-IMAGEWC-'].update(proccessed_image)
+window['-IMAGEWC-'].update(visible = True)
+window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
+window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+pixels_wc = function.get_pixel_values(working_copy_filename)    
+pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+information_text = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+window['-INFO_TEXT_WC-'].update(information_text)
+window['-INFO_TEXT_WC-'].update(visible = True)
 
 ## ---------------- Event loop ---------------- ##
 while True:
@@ -140,6 +148,7 @@ while True:
         window['-NOMBRE_IMAGEN-'].update(visible= True)
         window['-IMAGE-'].update(visible = True)
 
+
         working_copy_filename = utility.create_working_copy(filename)
         drawing_copy_filename = utility.create_drawing_copy(filename)
         # drawing_copy_filename_wc = utility.create_drawing_copy_wc(filename)
@@ -149,6 +158,15 @@ while True:
         information_text = utility.info_imagen(filename, pixel_frequency, rgb)
         window['-INFO_TEXT-'].update(information_text)
         window['-INFO_TEXT-'].update(visible = True)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+        pixels_wc = function.get_pixel_values(working_copy_filename)    
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        information_text = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+        window['-INFO_TEXT_WC-'].update(information_text)
+        window['-INFO_TEXT_WC-'].update(visible = True)
 
     if event == 'Guardar':
         new_filename = sg.popup_get_file("Guardar como", save_as= True)
@@ -459,7 +477,25 @@ while True:
             window['-INFO_TEXT_WC-'].update(information_text_wc)
             window['-INFO_TEXT_WC-'].update(visible = True)  
 
+    if event == 'Transformación de Escalado':
+        sg.popup('El tamaño de la seleccion de trabajo actual es %i x %i' % (img_width_wc, img_height_wc))
+        new_width = sg.popup_get_text('Introduce el nuevo ancho de la imagen:')
+        new_height = sg.popup_get_text('Introduce el nuevo alto de la imagen:')
 
+        table.scale(working_copy_filename, new_width, new_height)
+        # table.scale(working_copy_filename, img_width_wc, img_height_wc, 256, 1000)
+
+        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+
+        pixels_wc = function.get_pixel_values(working_copy_filename)    
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+        window['-INFO_TEXT_WC-'].update(information_text_wc)
+        window['-INFO_TEXT_WC-'].update(visible = True)  
 
 
 #############################################################################################
