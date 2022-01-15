@@ -83,8 +83,13 @@ layout = [[sg.Column(image_col, element_justification='c'),
            sg.Column(imagewc_col, element_justification='c'),
            [sg.Menu(menu_def)]]]
 
+rotate_layout = [[sg.Checkbox('Rotar a izquierda:', default=True, key="-ROTLEFT-")],
+                [sg.Radio('90º', "RADIO1", default=False, key="-R90-")],
+                [sg.Radio('180º', "RADIO1", default=False, key="-R180-")],
+                [sg.Radio('270º', "RADIO1", default=False, key="-R270-")]]
 ##---------------- Window creation ---------------- ##
 window = sg.Window('Multiple Format Image Viewer', layout, resizable=True).Finalize()
+rotate_window = sg.Window('Selección de rotación', rotate_layout, resizable=True).Finalize()
 window.Maximize()
 
 filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std.tif'
@@ -437,18 +442,25 @@ while True:
         window['-INFO_TEXT_WC-'].update(visible = True)
 
     if event == 'Rotaciones múltiplo de 90º':
-        table.rotate(working_copy_filename)
-        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
-        window['-IMAGEWC-'].update(proccessed_image)
-        window['-IMAGEWC-'].update(visible = True)
-        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
-        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+        rotation_angle = sg.popup_get_text('Introduce el ángulo de rotación (+/-(90, 180, 270))')
+        if rotation_angle not in {'90' , '-90', '180', '-180', '270', '-270'}:
+            print('Angulo de rotación no multiplo de 90')
+        else:
+            table.rotate(working_copy_filename, rotation_angle)
+            proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+            window['-IMAGEWC-'].update(proccessed_image)
+            window['-IMAGEWC-'].update(visible = True)
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
+            window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
 
-        pixels_wc = function.get_pixel_values(working_copy_filename)    
-        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
-        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
-        window['-INFO_TEXT_WC-'].update(information_text_wc)
-        window['-INFO_TEXT_WC-'].update(visible = True)  
+            pixels_wc = function.get_pixel_values(working_copy_filename)    
+            pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+            information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+            window['-INFO_TEXT_WC-'].update(information_text_wc)
+            window['-INFO_TEXT_WC-'].update(visible = True)  
+
+
+
 
 #############################################################################################
 #############################################################################################

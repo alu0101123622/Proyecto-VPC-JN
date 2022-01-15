@@ -356,22 +356,29 @@ def trasp_mirror(working_copy_filename):
     result_img = PIL.Image.open(working_copy_filename)
     pixs = img.load()
     result_pixs = result_img.load()
-    print(img.size)
     for i in range(img.size[0]):
         for j in range(img.size[1]):
             result_pixs[j, i] = pixs[i, j]
     result_img.save(working_copy_filename)
     del img
 
-def rotate(working_copy_filename):
-    img = PIL.Image.open(working_copy_filename)
-    result_img = PIL.Image.open(working_copy_filename)
-    result_img.resize([img.height, img.width])
-    pixs = img.load()
-    result_pixs = result_img.load()
-    print(img.size)
-    for i in range(img.size[0]):
-        for j in range(img.size[1]):
-            result_pixs[j, (img.size[1] - 1) - i] = pixs[i, j]
-    result_img.save(working_copy_filename)
+def rotate(working_copy_filename, rotation_angle):
+    rotation_times = int(int(rotation_angle) / 90)
+    if (rotation_times < 0 ):
+        if (rotation_times == -1):
+            rotation_times = 3
+        elif (rotation_times == -2):
+            rotation_times = 2
+        elif (rotation_times == -3):
+            rotation_times = 1
+    for times in range(rotation_times):
+        img = PIL.Image.open(working_copy_filename)
+        result_img = PIL.Image.open(working_copy_filename)
+        result_img.resize([img.height, img.width])
+        pixs = img.load()
+        result_pixs = result_img.load()
+        for i in range(img.size[0]):
+            for j in range(img.size[1]):
+                result_pixs[(img.size[1] - 1) - j, i] = pixs[i, j]
+        result_img.save(working_copy_filename)
     del img
