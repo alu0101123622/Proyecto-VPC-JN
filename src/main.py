@@ -63,7 +63,7 @@ menu_def = [['Imagen', ['Abrir','Guardar', 'Salir',]],
             ['Operaciones Lineales', ['Transformaciones lineales por tramos', 'Ajuste lineal del brillo y contraste', 'Escala de grises']],
             ['Operaciones No Lineales', ['Ecualización del histograma', 'Especificación del histograma', 'Correción Gamma', 'Diferencia entre dos imagenes']],
             ['Operaciones Geométricas', ['Espejo vertical', 'Espejo horizontal', 'Traspuesta de una imagen', 'Rotaciones múltiplo de 90º']],
-            ['Transformaciones', ['Transformación de Escalado', 'Transformación de rotación']]
+            ['Transformaciones', ['Transformación de Escalado', 'Transformación de Rotación']]
 
             ]
 
@@ -83,16 +83,12 @@ layout = [[sg.Column(image_col, element_justification='c'),
            sg.Column(imagewc_col, element_justification='c'),
            [sg.Menu(menu_def)]]]
 
-rotate_layout = [[sg.Checkbox('Rotar a izquierda:', default=True, key="-ROTLEFT-")],
-                [sg.Radio('90º', "RADIO1", default=False, key="-R90-")],
-                [sg.Radio('180º', "RADIO1", default=False, key="-R180-")],
-                [sg.Radio('270º', "RADIO1", default=False, key="-R270-")]]
+
 ##---------------- Window creation ---------------- ##
 window = sg.Window('Multiple Format Image Viewer', layout, resizable=True).Finalize()
-rotate_window = sg.Window('Selección de rotación', rotate_layout, resizable=True).Finalize()
 window.Maximize()
 
-filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std_WC_WC.tiff'
+filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std.tif'
 rgb = utility.is_rgb(filename)
 proccessed_image = convert_to_bytes(filename, resize=new_size)
 window['-IMAGE-'].update(proccessed_image)
@@ -484,6 +480,25 @@ while True:
 
         table.scale(working_copy_filename, new_width, new_height)
         # table.scale(working_copy_filename, img_width_wc, img_height_wc, 256, 1000)
+
+        proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
+        window['-IMAGEWC-'].update(proccessed_image)
+        window['-IMAGEWC-'].update(visible = True)
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(working_copy_filename + "_GREYSCALE")
+        window['-NOMBRE_IMAGEN_RESULTANTE-'].update(visible= True)
+
+        pixels_wc = function.get_pixel_values(working_copy_filename)    
+        pixel_frequency_wc = function.calculate_pixel_frequency(pixels_wc)
+        information_text_wc = utility.info_imagen(working_copy_filename, pixel_frequency_wc, rgb)
+        window['-INFO_TEXT_WC-'].update(information_text_wc)
+        window['-INFO_TEXT_WC-'].update(visible = True)  
+
+    if event == 'Transformación de Rotación':
+        # sg.popup('Seleccione el ángulo de rotación.\nSi desea que se rote hacia la izquierda incluya un simbolo (-) delante del valor')
+        # rotation_angle = sg.popup_get_text('Introduce el ángulo de rotación de la imagen:')
+
+        # table.rotate_paint(working_copy_filename, rotation_angle)
+        table.rotate_paint(working_copy_filename, '45')
 
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)
