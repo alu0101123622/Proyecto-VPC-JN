@@ -88,7 +88,7 @@ layout = [[sg.Column(image_col, element_justification='c'),
 window = sg.Window('Multiple Format Image Viewer', layout, resizable=True).Finalize()
 window.Maximize()
 
-filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std.tif'
+filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std_WC.tiff'
 rgb = utility.is_rgb(filename)
 proccessed_image = convert_to_bytes(filename, resize=new_size)
 window['-IMAGE-'].update(proccessed_image)
@@ -498,7 +498,7 @@ while True:
         # rotation_angle = sg.popup_get_text('Introduce el ángulo de rotación de la imagen:')
 
         # table.rotate_paint(working_copy_filename, rotation_angle)
-        table.rotate_paint(working_copy_filename, '45')
+        table.rotate_ti(working_copy_filename, '211')
 
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)

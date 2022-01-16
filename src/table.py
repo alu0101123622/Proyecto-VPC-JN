@@ -406,21 +406,21 @@ def scale(working_copy_filename, new_width, new_height):
     del img    
 
 
-def rotate_paint(working_copy_filename, rotation_angle):
+def rotate_td(working_copy_filename, rotation_angle):
     img = PIL.Image.open(working_copy_filename)
 
     sinx = np.sin(int(rotation_angle))
     cosx = np.cos(int(rotation_angle))
 
     corner_E = (0,0)
-    corner_F = (img.size[0],0)
-    corner_G = (img.size)
-    corner_H = (0, img.size[1])
+    corner_F = (img.size[0] - 1, 0)
+    corner_G = (img.size[0] - 1, img.size[1] - 1)
+    corner_H = (0, img.size[1] - 1)
 
-    new_corner_E = (int(np.ceil((corner_E[0]*cosx)) - (corner_E[1]*sinx)) , int(np.ceil((corner_E[0]*sinx)) + (corner_E[1]*cosx)))
-    new_corner_F = (int(np.ceil((corner_F[0]*cosx)) - (corner_F[1]*sinx)) , int(np.ceil((corner_F[0]*sinx)) + (corner_F[1]*cosx)))
-    new_corner_G = (int(np.ceil((corner_G[0]*cosx)) - (corner_G[1]*sinx)) , int(np.ceil((corner_G[0]*sinx)) + (corner_G[1]*cosx)))
-    new_corner_H = (int(np.ceil((corner_H[0]*cosx)) - (corner_H[1]*sinx)) , int(np.ceil((corner_H[0]*sinx)) + (corner_H[1]*cosx)))
+    new_corner_E = (int(corner_E[0]*cosx) - (corner_E[1]*sinx) , int(corner_E[0]*sinx) + (corner_E[1]*cosx))
+    new_corner_F = (int(corner_F[0]*cosx) - (corner_F[1]*sinx) , int(corner_F[0]*sinx) + (corner_F[1]*cosx))
+    new_corner_G = (int(corner_G[0]*cosx) - (corner_G[1]*sinx) , int(corner_G[0]*sinx) + (corner_G[1]*cosx))
+    new_corner_H = (int(corner_H[0]*cosx) - (corner_H[1]*sinx) , int(corner_H[0]*sinx) + (corner_H[1]*cosx))
 
     max_x = max([new_corner_E[0], new_corner_F[0], new_corner_G[0], new_corner_H[0]])
     max_y = max([new_corner_E[1], new_corner_F[1], new_corner_G[1], new_corner_H[1]])
@@ -428,20 +428,60 @@ def rotate_paint(working_copy_filename, rotation_angle):
     min_y = min([new_corner_E[1], new_corner_F[1], new_corner_G[1], new_corner_H[1]])
 
     new_size = (int(abs(np.ceil(max_x - min_x))), int(abs(np.ceil(max_y - min_y))))
-    x_shift = new_size[0] - max_x 
     result_img = PIL.Image.new(mode="RGB",size= new_size)
     pixs = img.load()
     result_pixs = result_img.load()
-    maxi = 0
-    maxj = 0
+    x_shift = max_x
+    y_shift = max_y
     print(max_x, max_y, min_x, min_y, x_shift)
     print([corner_E, corner_F, corner_G, corner_H, new_corner_E, new_corner_F, new_corner_G, new_corner_H, new_size, sinx, cosx])
     for i in range(img.size[0]):
         for j in range(img.size[1]):
-            new_i = (i*cosx) - (j*sinx) + x_shift
-            new_j = (i*sinx) + (j*cosx)
+            new_i = (i*cosx) - (j*sinx) - x_shift
+            new_j = (i*sinx) + (j*cosx) - y_shift
             # print([new_i, new_j, i, j]) 
             result_pixs[new_i, new_j] = pixs[i, j]
-    print(maxi, maxj)
+    result_img.save(working_copy_filename)
+    del img    
+
+
+##############################################################################################
+
+def rotate_ti(working_copy_filename, rotation_angle):
+    img = PIL.Image.open(working_copy_filename)
+
+    sinx = np.sin(int(rotation_angle))
+    cosx = np.cos(int(rotation_angle))
+
+    corner_E = (0,0)
+    corner_F = (img.size[0] - 1, 0)
+    corner_G = (img.size[0] - 1, img.size[1] - 1)
+    corner_H = (0, img.size[1] - 1)
+
+    new_corner_E = (int(corner_E[0]*cosx) - (corner_E[1]*sinx) , int(corner_E[0]*sinx) + (corner_E[1]*cosx))
+    new_corner_F = (int(corner_F[0]*cosx) - (corner_F[1]*sinx) , int(corner_F[0]*sinx) + (corner_F[1]*cosx))
+    new_corner_G = (int(corner_G[0]*cosx) - (corner_G[1]*sinx) , int(corner_G[0]*sinx) + (corner_G[1]*cosx))
+    new_corner_H = (int(corner_H[0]*cosx) - (corner_H[1]*sinx) , int(corner_H[0]*sinx) + (corner_H[1]*cosx))
+
+    max_x = max([new_corner_E[0], new_corner_F[0], new_corner_G[0], new_corner_H[0]])
+    max_y = max([new_corner_E[1], new_corner_F[1], new_corner_G[1], new_corner_H[1]])
+    min_x = min([new_corner_E[0], new_corner_F[0], new_corner_G[0], new_corner_H[0]])
+    min_y = min([new_corner_E[1], new_corner_F[1], new_corner_G[1], new_corner_H[1]])
+
+    new_size = (int(abs(np.ceil(max_x - min_x))), int(abs(np.ceil(max_y - min_y))))
+    result_img = PIL.Image.new(mode="RGB",size= new_size)
+    pixs = img.load()
+    result_pixs = result_img.load()
+    x_shift = max_x
+    y_shift = max_y
+    # print(max_x, max_y, min_x, min_y, x_shift)
+    print([new_corner_E, new_corner_F, new_corner_G, new_corner_H, new_size, sinx, cosx])
+    print([corner_E, corner_F, corner_G, corner_H, new_corner_E, new_corner_F, new_corner_G, new_corner_H, new_size, sinx, cosx])
+    for i in range(img.size[0]):
+        for j in range(img.size[1]):
+            new_i = (i*cosx) - (j*sinx) - x_shift
+            new_j = (i*sinx) + (j*cosx) - y_shift
+            # print([new_i, new_j, i, j]) 
+            result_pixs[new_i, new_j] = pixs[i, j]
     result_img.save(working_copy_filename)
     del img    
