@@ -89,6 +89,7 @@ window = sg.Window('Multiple Format Image Viewer', layout, resizable=True).Final
 window.Maximize()
 
 filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/lena-std_WC.tiff'
+# filename = 'C:/Users/Nerea/Documents/Ingenería Informática/Visión por Computador/Proyecto-VPC-JN/VPCIMG/5.3.01.tiff'
 rgb = utility.is_rgb(filename)
 proccessed_image = convert_to_bytes(filename, resize=new_size)
 window['-IMAGE-'].update(proccessed_image)
@@ -474,12 +475,18 @@ while True:
             window['-INFO_TEXT_WC-'].update(visible = True)  
 
     if event == 'Transformación de Escalado':
-        sg.popup('El tamaño de la seleccion de trabajo actual es %i x %i' % (img_width_wc, img_height_wc))
-        new_width = sg.popup_get_text('Introduce el nuevo ancho de la imagen:')
-        new_height = sg.popup_get_text('Introduce el nuevo alto de la imagen:')
-
-        table.scale(working_copy_filename, new_width, new_height)
-        # table.scale(working_copy_filename, img_width_wc, img_height_wc, 256, 1000)
+        mode = sg.popup_get_text('Introduce 0 para modo escalado VMP o 1 para modo escalado bilineal')
+        mode = int(mode)
+        if (mode == 0):
+            sg.popup('El tamaño de la seleccion de trabajo actual es %i x %i' % (img_width_wc, img_height_wc))
+            new_width = sg.popup_get_text('Introduce el nuevo ancho de la imagen:')
+            new_height = sg.popup_get_text('Introduce el nuevo alto de la imagen:')
+            table.scale_vmp(working_copy_filename, new_width, new_height)
+        elif (mode == 1):
+            sg.popup('El tamaño de la seleccion de trabajo actual es %i x %i' % (img_width_wc, img_height_wc))
+            new_width = sg.popup_get_text('Introduce el nuevo ancho de la imagen:')
+            new_height = sg.popup_get_text('Introduce el nuevo alto de la imagen:')
+            table.scale_bilineal(working_copy_filename, new_width, new_height)
 
         proccessed_image = convert_to_bytes(working_copy_filename, resize=new_size)
         window['-IMAGEWC-'].update(proccessed_image)

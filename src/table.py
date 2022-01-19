@@ -386,25 +386,60 @@ def rotate(working_copy_filename, rotation_angle):
     del img
 
 
-def scale(working_copy_filename, new_width, new_height):
+def scale_vmp(working_copy_filename, new_width, new_height):
     new_width, new_height = int(new_width), int(new_height)
     img = PIL.Image.open(working_copy_filename)
-    result_img = PIL.Image.new(mode="RGB",size=(new_width, new_height))
+    result_img = PIL.Image.new(mode="RGB", size=(new_width, new_height))
     pixs = img.load()
     result_pixs = result_img.load()
     original_width, original_height = img.size
     width_correlation = new_width / original_width
     height_correlation = new_height / original_height
-    print(result_img.size)
     for i in range(result_img.size[0]):
         for j in range(result_img.size[1]):
             x_pos_translation = i / width_correlation
             y_pos_translation = j / height_correlation
-            # print([i, j, int(np.floor(x_pos_translation)), int(np.floor(y_pos_translation))])
             result_pixs[i,j] = pixs[int(np.floor(x_pos_translation)), int(np.floor(y_pos_translation))]
     result_img.save(working_copy_filename)
     del img    
 
+def scale_bilineal(working_copy_filename, new_width, new_height):
+    new_width, new_height = int(new_width), int(new_height)
+    img = PIL.Image.open(working_copy_filename)
+    old_width, old_height = img.size
+    result_img = PIL.Image.new(mode="RGB", size=(new_width, new_height))
+    pixs = img.load()
+    result_pixs = result_img.load()
+    width_correlation = new_width / old_width
+    height_correlation = new_height / old_height
+    P = []
+    for i in range(result_img.size[0]):
+        for j in range(result_img.size[1]):
+            x_pos_translation = i / width_correlation # x
+            y_pos_translation = j / height_correlation # y
+            p, q = x_pos_translation - np.floor(x_pos_translation), y_pos_translation - np.floor(y_pos_translation)
+            x_pos_translation = int(x_pos_translation)
+            y_pos_translation = int(y_pos_translation)
+            if (x_pos_translation == img.size[0] - 1):
+                x_pos_translation = x_pos_translation - 1
+                p = 0
+            if (y_pos_translation == img.size[1] - 1):
+                y_pos_translation = y_pos_translation - 1
+                q = 0
+            A = pixs[x_pos_translation, y_pos_translation + 1]
+            B = pixs[x_pos_translation + 1, y_pos_translation + 1]        
+            C = pixs[x_pos_translation, y_pos_translation]
+            D = pixs[x_pos_translation + 1, y_pos_translation]
+            for pos in range(3):
+                Q = A[pos] + ((B[pos] - A[pos]) * p)
+                R = C[pos] + ((D[pos] - C[pos]) * q)
+                # pos_P = (C[pos] + ((D[pos] - C[pos]) * p) + ((A[pos] - C[pos]) * q) + ((B[pos] + C[pos] - A[pos] - D[pos]) * p * q))
+                pos_P = R + ((Q - R) * q)
+                P.append(int(pos_P))
+            result_pixs[i, j] = (P[0], P[1], P[2])
+            P.clear()
+    result_img.save(working_copy_filename)
+    del img 
 
 def rotate_td(working_copy_filename, rotation_angle):
     img = PIL.Image.open(working_copy_filename)
@@ -443,7 +478,6 @@ def rotate_td(working_copy_filename, rotation_angle):
             result_pixs[new_i, new_j] = pixs[i, j]
     result_img.save(working_copy_filename)
     del img    
-
 
 ##############################################################################################
 
@@ -484,4 +518,4 @@ def rotate_ti(working_copy_filename, rotation_angle):
             # print([new_i, new_j, i, j]) 
             result_pixs[new_i, new_j] = pixs[i, j]
     result_img.save(working_copy_filename)
-    del img    
+    del img
