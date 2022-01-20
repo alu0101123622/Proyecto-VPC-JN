@@ -118,9 +118,12 @@ def calculate_array_slope(array_points):
             array_slopes.append(slope)
     return array_slopes
 
-def correct_frequency(pixel_frequency):
+def correct_frequency(pixel_frequency, bp = 0):
     color_array = [ r for r in range(256)]
     for color in color_array:
         if color not in pixel_frequency.keys():
             pixel_frequency[color] = 0
+    for color in pixel_frequency.keys():
+        if color == 0:
+            pixel_frequency[color] -= bp
     return pixel_frequency

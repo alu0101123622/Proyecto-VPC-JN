@@ -27,7 +27,7 @@ def get_pixel_values(filename):
     return pixel_values
 
 ## Method that calculates the histogram of the colors of the image
-def calculate_pixel_frequency(pixel_values):
+def calculate_pixel_frequency(pixel_values, bp = 0):
     grey_pix_freq =  {}
     red_pix_freq =   {}
     green_pix_freq = {}
@@ -51,9 +51,9 @@ def calculate_pixel_frequency(pixel_values):
                 blue_pix_freq[pixel[2]] += 1
             else:
                 blue_pix_freq[pixel[2]] = 1
-        red_pix_freq = utility.correct_frequency(red_pix_freq)
-        green_pix_freq = utility.correct_frequency(green_pix_freq)
-        blue_pix_freq = utility.correct_frequency(blue_pix_freq)
+        red_pix_freq = utility.correct_frequency(red_pix_freq, bp)
+        green_pix_freq = utility.correct_frequency(green_pix_freq, bp)
+        blue_pix_freq = utility.correct_frequency(blue_pix_freq, bp)
         red_pix_freq_ord = collections.OrderedDict(sorted(red_pix_freq.items()))
         green_pix_freq_ord = collections.OrderedDict(sorted(green_pix_freq.items()))
         blue_pix_freq_ord = collections.OrderedDict(sorted(blue_pix_freq.items()))
